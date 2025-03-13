@@ -13,6 +13,8 @@ from supertree.treedata import TreeData
 import importlib.metadata
 import ipywidgets as widgets
 
+from pprint import pprint
+
 
 class SuperTree:
     def __init__(
@@ -158,7 +160,7 @@ class SuperTree:
             self.feature_data = self.feature_data.values
         if isinstance(self.target_data, pd.DataFrame):
             self.target_data = self.target_data.values.flatten()
-        
+
         self.target_len = len(self.target_names)
         self.tree_data = TreeData(
             self.model_type,
@@ -170,7 +172,7 @@ class SuperTree:
         )
 
         self.target_data = self.tree_data.data_target
-    
+
 
         if self.which_model == "classification" and len(self.target_names) != np.unique(self.target_data):
             raise TypeError(
@@ -356,6 +358,7 @@ class SuperTree:
         Save Node Data to Json
         """
         for node_info in list(self.node_list):
+            # pprint(node_info)
             node = Node(
                 node_info["feature"],
                 node_info["threshold"],
@@ -364,8 +367,7 @@ class SuperTree:
                 node_info["class_distribution"],
                 node_info["predicted_class"],
                 node_info["is_leaf"],
-                node_info["left_child_index"],
-                node_info["right_child_index"],
+                node_info["child_indices"],
             )
             self.nodes.append(node)
 
@@ -381,43 +383,31 @@ class SuperTree:
         tree_json = json.dumps(tree_dict, indent=4)
         return tree_json
 
-    def _create_node_dfs(self, node_index, left_right, threshold, feature, x_axis):
+    def _create_node_dfs(self, node_index, child_state, threshold, feature, x_axis):
         """
         Using DFS algorithm to create tree structure;
         """
         node = self.nodes[node_index]
-        if left_right == "ROOT":
+        if child_state == "ROOT":
             node.start_end_x_axis = []
             for i in range(self.tree_data.feature_names_size):
-                node.start_end_x_axis.append(["notexist", "notexist"])
+                node.start_end_x_axis.append(["notexist"] * len(node.node_order))
         else:
             node.start_end_x_axis = deepcopy(x_axis)
-        if (not self.model_type.startswith("nodata")):
-            if left_right == "R" and feature >= 0:
-                node.start_end_x_axis[feature][1] = threshold
 
-            if left_right == "L" and feature >= 0:
-                node.start_end_x_axis[feature][0] = threshold
+            if (not self.model_type.startswith("nodata")) and feature >= 0:
+                node.start_end_x_axis[feature][node.node_order.index(child_state)] = threshold
 
-        if node.left_children != -1:
-            node.add_left(self.nodes[node.left_children])
-            self._create_node_dfs(
-                node.left_children,
-                "L",
-                node.threshold,
-                node.feature,
-                node.start_end_x_axis,
-            )
-
-        if node.right_children != -1:
-            node.add_right(self.nodes[node.right_children])
-            self._create_node_dfs(
-                node.right_children,
-                "R",
-                node.threshold,
-                node.feature,
-                node.start_end_x_axis,
-            )
+        for key, node_children in node.node_children.items():
+            if node_children != -1:
+                node.add_node(key, self.nodes[node_children])
+                self._create_node_dfs(
+                    node_children,
+                    key,
+                    node.threshold,
+                    node.feature,
+                    node.start_end_x_axis,
+                )
 
 
     def which_model(self):
@@ -498,7 +488,7 @@ class SuperTree:
         node.class_distribution = [0] * target_len
         index_set = set()
 
-        
+
         for j in range(len(self.feature_data)):
             for i in range(len(node.start_end_x_axis)):
                 if node.start_end_x_axis[i][0] != "notexist":
@@ -508,7 +498,7 @@ class SuperTree:
                 if node.start_end_x_axis[i][1] != "notexist":
                     if node.start_end_x_axis[i][1] > self.feature_data[j][i]:
                         index_set.add(j)
-                        
+
 
 
         samples = 0
@@ -520,11 +510,9 @@ class SuperTree:
             node.samples = samples
         node.class_distribution = [node.class_distribution]
 
-        if node.left_node is not None:
-            self.count_class_distribution(node.left_node)
-
-        if node.right_node is not None:
-            self.count_class_distribution(node.right_node)
+        for key, child_node in node.nodes.items():
+            if child_node is not None:
+                self.count_class_distribution(child_node)
 
     def is_model_fitted(self):
 
@@ -597,11 +585,10 @@ class SuperTree:
                 samples += 1
         if node.samples == -1:
             node.samples = samples
-        if node.left_node is not None:
-            self.count_samples(node.left_node)
 
-        if node.right_node is not None:
-            self.count_samples(node.right_node)
+        for key, child_node in node.nodes.items():
+            if child_node is not None:
+                self.count_samples(child_node)
 
     def convert_model_to_dict_array(self):
         """
@@ -693,8 +680,10 @@ class SuperTree:
                     "predicted_class": predicted_class,
                     "samples": samples,
                     "is_leaf": is_leaf,
-                    "left_child_index": left_children,
-                    "right_child_index": right_children,
+                    "child_indices": {
+                        "left": left_children,
+                        "right": right_children,
+                    }
                 }
                 self.node_list.append(node_info)
         if model_name == "LightGBMBooster" or model_name in ("LGBMRegressor", "LGBMClassifier"):
@@ -765,8 +754,10 @@ class SuperTree:
                 "predicted_class": predicted_data,
                 "samples": node["internal_count"],
                 "is_leaf": False,
-                "left_child_index": None,
-                "right_child_index": None,
+                "child_indices": {
+                    "left": None,
+                    "right": None,
+                }
             }
             self.node_list.append(node_info)
             left_child_index = self.collect_node_info_lgbm(
@@ -775,8 +766,8 @@ class SuperTree:
             right_child_index = self.collect_node_info_lgbm(
                 node["right_child"], depth + 1
             )
-            self.node_list[node_index]["left_child_index"] = left_child_index
-            self.node_list[node_index]["right_child_index"] = right_child_index
+            self.node_list[node_index]["child_indices"]["left"] = left_child_index
+            self.node_list[node_index]["child_indices"]["right"] = right_child_index
         else:
             predicted_data = None
             if self.model_type.startswith("nodata"):
@@ -795,8 +786,10 @@ class SuperTree:
                 "predicted_class": predicted_data,
                 "samples": node["leaf_count"],
                 "is_leaf": True,
-                "left_child_index": -1,
-                "right_child_index": -1,
+                "child_indices": {
+                    "left": -1,
+                    "right": -1,
+                }
             }
 
             self.node_list.append(node_info)
@@ -838,8 +831,10 @@ class SuperTree:
                 "predicted_class": predicted_data,
                 "samples": node.get("cover", 0),
                 "is_leaf": False,
-                "left_child_index": None,
-                "right_child_index": None,
+                "child_indices": {
+                    "left": None,
+                    "right": None,
+                }
             }
             self.node_list.append(node_info)
             left_child_index = self.collect_node_info_xgboost(
@@ -848,8 +843,8 @@ class SuperTree:
             right_child_index = self.collect_node_info_xgboost(
                 node["children"][1], depth + 1
             )
-            self.node_list[node_index]["left_child_index"] = left_child_index
-            self.node_list[node_index]["right_child_index"] = right_child_index
+            self.node_list[node_index]["child_indices"]["left"] = left_child_index
+            self.node_list[node_index]["child_indices"]["right"] = right_child_index
         else:
             class_dist = ["No data"]
             if self.model_type == "classification":
@@ -871,8 +866,10 @@ class SuperTree:
                 "predicted_class": predicted_data,
                 "samples": node.get("cover", 0),
                 "is_leaf": True,
-                "left_child_index": -1,
-                "right_child_index": -1,
+                "child_indices": {
+                    "left": -1,
+                    "right": -1,
+                },
             }
             self.node_list.append(node_info)
 
@@ -922,8 +919,10 @@ class SuperTree:
                 "predicted_class": predicted_class,
                 "samples": samples,
                 "is_leaf": is_leaf,
-                "left_child_index": left_child,
-                "right_child_index": right_child,
+                "child_indices": {
+                    "left": left_child,
+                    "right": left_child,
+                },
             }
             self.node_list.append(node_info)
 
@@ -1008,8 +1007,10 @@ class SuperTree:
                                 "predicted_class": predicted_class if node['left_child'] == -1 and node['right_child'] == -1 else "NoData",
                                 "samples": -1,
                                 "is_leaf": True if node['left_child'] == -1 and node['right_child'] == -1 else False,
-                                "left_child_index": node['left_child'],
-                                "right_child_index": node['right_child'],
+                                "child_indices": {
+                                    "left": node['left_child'],
+                                    "right": node['left_child'],
+                                },
                             }
 
                             self.node_list.append(node_info)
@@ -1042,8 +1043,8 @@ class SuperTree:
                     self.which_tree=0
                 else:
                     self.which_tree = self.which_tree+1
-                
-                
+
+
                 self.tree_data.set_which_tree(self.which_tree)
                 combined_data_str = self._get_combined_data()
                 display(HTML(templatehtml.get_d3_html(
@@ -1142,7 +1143,7 @@ class SuperTree:
                 model_dict = self.model.dump_model()
 
             return len(model_dict["tree_info"])
-        
+
         if model_name in ("XGBoostBooster", "XGBClassifier", "XGBRegressor", "XGBRFClassifier", "XGBRFRegressor"):
             if model_name != "XGBoostBooster":
                 booster = self.model.get_booster()

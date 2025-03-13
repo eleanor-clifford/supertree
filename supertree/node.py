@@ -5,7 +5,7 @@ class Node:
     def __init__(self, feature, threshold, impurity, samples,
                  class_distribution,
                  treeclass, is_leaf,
-                 left_children, right_children):
+                 node_children):
         self.feature = feature
         self.threshold = threshold
         self.impurity = impurity
@@ -13,11 +13,10 @@ class Node:
         self.class_distribution = class_distribution
         self.treeclass = treeclass
         self.is_leaf = is_leaf
-        self.left_children = left_children
-        self.right_children = right_children
-        self.left_node = None
-        self.right_node = None
+        self.node_children = node_children
+        self.nodes = dict()
         self.start_end_x_axis = []
+        self.node_order = ["left", "right"]
 
 
     def to_dict(self):
@@ -62,24 +61,15 @@ class Node:
 
         }
 
-        if self.left_node is not None:
-            node_dict["left_node"] = self.left_node.to_dict()
-        else:
-            node_dict["left_node"] = None
-
-        if self.right_node is not None:
-            node_dict["right_node"] = self.right_node.to_dict()
-        else:
-            node_dict["right_node"] = None
+        node_dict["node_children"] = []
+        for key in self.node_order:
+            node_dict["node_children"].append(self.nodes[key].to_dict() if key in self.nodes else None)
 
         return node_dict
 
 
-    def add_left(self, left_node):
-        self.left_node = left_node
-
-    def add_right(self, right_node):
-        self.right_node = right_node
+    def add_node(self, key, node):
+        self.nodes[key] = node
 
     def __str__(self):
         return str(self.to_dict())
