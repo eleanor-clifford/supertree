@@ -1,11 +1,13 @@
 import numpy as np
 import pandas as pd
+import json
+from typing import Sequence, Mapping
 
 class Node:
     def __init__(self, feature, threshold, impurity, samples,
                  class_distribution,
                  treeclass, is_leaf,
-                 node_children):
+                 node_children, node_order = None):
         self.feature = feature
         self.threshold = threshold
         self.impurity = impurity
@@ -16,7 +18,7 @@ class Node:
         self.node_children = node_children
         self.nodes = dict()
         self.start_end_x_axis = []
-        self.node_order = ["left", "right"]
+        self.node_order = node_order or ["left", "right"]
 
 
     def to_dict(self):
@@ -54,7 +56,7 @@ class Node:
             "threshold": self.threshold,
             "impurity": convert(self.impurity),
             "samples": int(self.samples) if isinstance(self.samples, np.longlong) else self.samples,
-            "class_distribution": [convert(val) for val in self.class_distribution],
+            "class_distribution": [convert(val) for val in self.class_distribution] if self.class_distribution is not None else None,
             "treeclass": convert(self.treeclass),
             "is_leaf": self.is_leaf,
             "start_end_x_axis": [convert(val) for val in self.start_end_x_axis] if self.start_end_x_axis is not None else None,

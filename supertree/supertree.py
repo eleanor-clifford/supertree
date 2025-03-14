@@ -14,6 +14,59 @@ import importlib.metadata
 import ipywidgets as widgets
 
 from pprint import pprint
+import traceback
+from typing import Mapping, Sequence
+def stringify(d):
+    if isinstance(d, Mapping):
+        return {
+            stringify(k): stringify(v)
+            for k, v in d.items()
+        }
+    elif isinstance(d, Sequence) and not isinstance(d, str):
+        return tuple(stringify(x) for x in d)
+    else:
+        return str(d)
+
+import sys
+import re
+from inspect import signature as sig
+from typing import Union
+def inspect(obj, name, depth=0, show_hidden=False, indent=0, file=sys.stdout, not_type=Union[int, str, list], not_key=[], single_arg=None):
+    _p = " " * indent + name + ": "
+    if depth == 0:
+        if callable(obj):
+            if len(sig(obj).parameters) == 0:
+                s = "(func(0)) " + str(obj())
+            elif len(sig(obj).parameters) == 1 and single_arg:
+                s = "(func(1)) " + str(obj(single_arg))
+            else:
+                s = "(func) " + str(sig(obj))
+        else:
+            s = str(obj)
+        print(_p + s.replace("\n", "\n" + _p), file=file)
+    else:
+        inspect(
+            obj, name,
+            depth=0, indent=indent,
+            show_hidden=show_hidden, file=file,
+            not_type=not_type, not_key=not_key,
+            single_arg=single_arg,
+        )
+        if not callable(obj) and not isinstance(obj, not_type):
+            for key in dir(obj):
+                if key[0] == "_" and not show_hidden:
+                    continue
+                if key in not_key:
+                    continue
+                inspect(
+                    getattr(obj, key), key,
+                    depth=depth-1, indent=indent+2,
+                    show_hidden=show_hidden, file=file,
+                    not_type=not_type, not_key=not_key,
+                    single_arg=single_arg,
+                )
+
+
 
 
 class SuperTree:
@@ -51,7 +104,8 @@ class SuperTree:
             "XGBRFClassifier",
             "XGBRFRegressor",
             "ModelLoader",
-            "ModelProto"
+            "ModelProto",
+            "Tree",  # CHAID ...
         ]
 
         if model.__class__.__name__ not in valid_model_classes:
@@ -89,7 +143,7 @@ class SuperTree:
         self.which_iteration = 0
         self.feature_names = feature_names
         self.target_names = target_names
-        if not self.is_model_fitted() and self.model_name not in ("ModelProto") and self.model_name not in ("ModelLoader"):
+        if not self.is_model_fitted() and self.model_name not in ("ModelProto", "ModelLoader", "Tree"):
             raise TypeError("Model is not fitted")
 
         if feature_names is None:
@@ -368,6 +422,7 @@ class SuperTree:
                 node_info["predicted_class"],
                 node_info["is_leaf"],
                 node_info["child_indices"],
+                node_info.get("node_order"),
             )
             self.nodes.append(node)
 
@@ -383,7 +438,7 @@ class SuperTree:
         tree_json = json.dumps(tree_dict, indent=4)
         return tree_json
 
-    def _create_node_dfs(self, node_index, child_state, threshold, feature, x_axis):
+    def _create_node_dfs(self, node_index, child_state, threshold, feature, x_axis, trace=True):
         """
         Using DFS algorithm to create tree structure;
         """
@@ -407,6 +462,7 @@ class SuperTree:
                     node.threshold,
                     node.feature,
                     node.start_end_x_axis,
+                    trace=False
                 )
 
 
@@ -424,6 +480,7 @@ class SuperTree:
             "XGBClassifier",
             "XGBRFClassifier",
             "HistGradientBoostingClassifier",
+            "Tree",
         ):
             return "classification"
         elif self.model_name in (
@@ -488,14 +545,14 @@ class SuperTree:
         node.class_distribution = [0] * target_len
         index_set = set()
 
-
         for j in range(len(self.feature_data)):
             for i in range(len(node.start_end_x_axis)):
-                if node.start_end_x_axis[i][0] != "notexist":
+                # TODO: !!!!
+                if node.start_end_x_axis[i][0] != "notexist" and node.start_end_x_axis[i][0] is not None:
                     if node.start_end_x_axis[i][0] <= self.feature_data[j][i]:
                         index_set.add(j)
 
-                if node.start_end_x_axis[i][1] != "notexist":
+                if node.start_end_x_axis[i][1] != "notexist" and node.start_end_x_axis[i][1] is not None:
                     if node.start_end_x_axis[i][1] > self.feature_data[j][i]:
                         index_set.add(j)
 
@@ -571,11 +628,13 @@ class SuperTree:
         index_set = set()
         for i in range(len(node.start_end_x_axis)):
             for j in range(len(self.feature_data)):
-                if node.start_end_x_axis[i][0] != "notexist":
+                # TODO: !!!!
+                if node.start_end_x_axis[i][0] != "notexist" and node.start_end_x_axis[i][0] is not None:
                     if node.start_end_x_axis[i][0] < self.feature_data[j][i]:
                         index_set.add(j)
 
-                if node.start_end_x_axis[i][1] != "notexist":
+                # TODO: !!!!
+                if node.start_end_x_axis[i][1] != "notexist" and node.start_end_x_axis[i][1] is not None:
                     if node.start_end_x_axis[i][1] > self.feature_data[j][i]:
                         index_set.add(j)
 
@@ -685,6 +744,7 @@ class SuperTree:
                         "right": right_children,
                     }
                 }
+                # print(json.dumps(stringify(node_info), indent=2))
                 self.node_list.append(node_info)
         if model_name == "LightGBMBooster" or model_name in ("LGBMRegressor", "LGBMClassifier"):
             if model_name != "LightGBMBooster":
@@ -728,6 +788,56 @@ class SuperTree:
             self.collect_node_info_histgb(nodes)
         if model_name in ("ModelProto"):
             self.collect_node_info_onnx(self.model)
+
+        if model_name in ("Tree"):
+            self.collect_node_info_chaid(self.model)
+
+
+    def collect_node_info_chaid(self, tree):
+        tree = tree.to_tree()
+        tree_id = tree.identifier
+
+        all_node_keys = set()
+        for node in tree.all_nodes():
+            all_node_keys.add(" or ".join(sorted(node.tag.choices)))
+
+        for i, node in enumerate(tree.all_nodes()):
+            print("===")
+            inspect(node, "node", depth=2, not_key=["fpointer", "bpointer", "update_bpointer", "reset_pointers", "set_initial_tree_id"], single_arg=tree_id)
+            print("===")
+            successors = node.successors(tree_id)
+
+            children = {}
+            for succ_idx in successors:
+                succ = tree.all_nodes()[succ_idx]
+                choices = succ.tag.choices
+                assert len(choices) == 1  # cannot handle multiple choices for now
+                children[choices[0]] = succ_idx
+
+            # feature = None
+            feature = 0 # TODO: !!!!
+            if node.tag.split_variable in self.feature_names:
+                feature = self.feature_names.index(node.tag.split_variable)
+            elif node.tag.split_variable is not None:
+                print(f"WARNING: {node.tag.split_variable} not in feature_names")
+
+            node_info = {
+                "index": i,
+                "feature": feature,
+                "impurity": -1,
+                "threshold": 0.5,  # ???? something to do with the line between the distributions
+                "class_distribution": [list(node.tag.members.values())], # order !!!
+                "predicted_class": sorted(node.tag.members.items(), key=lambda d: d[1])[-1][0],
+                "samples": int(sum(node.tag.members.values())),
+                "is_leaf": node.is_leaf(),
+                "child_indices": children,
+                # "node_order": sorted(list(all_node_keys)),
+                # "node_order": list(children.keys()),
+                # "node_order": ['text_a', 'not_applicable or text_a', 'not_applicable', 'text_a or text_b', 'not_applicable_or_text_b', 'text_b'],
+                "node_order": ['text_a', 'not_applicable', 'text_b'], # !!!
+            }
+            print(json.dumps(stringify(node_info), indent=2))
+            self.node_list.append(node_info)
 
     def collect_node_info_lgbm(self, node, depth=0):
         """
