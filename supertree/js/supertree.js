@@ -168,7 +168,17 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
             t(e)
           })) : Y++
         }(T), s("debug", X, "max depth"), lt = 300 * Y, rt = 400 * X;
-        var V = d3.selectAll("#graph-div-treeID").append("svg").attr("width", lt + at.right + at.left).attr("height", rt + at.top + at.bottom).attr("id", "mySVG-treeID").attr("class", "st-svg").call(C).append("g").attr("transform", "translate(" + at.left + "," + at.top + ")"),
+        var V = d3
+          .selectAll("#graph-div-treeID")
+          .append("svg")
+          .attr("width", lt + at.right + at.left)
+          .attr("height", rt + at.top + at.bottom)
+          .attr("id", "mySVG-treeID")
+          .attr("class", "st-svg")
+          .call(C)
+          .append("g")
+          .attr("transform", "translate(" + at.left + "," + at.top + ")"),
+
           j = d3.selectAll("#st-side-panel-treeID").append("svg").attr("id", "st-side-svg-treeID").attr("class", "st-svg-2").attr("width", "100%").attr("height", 1e3).style("background-color", "#f3f9fb"),
           L = "$depth";
 
@@ -779,21 +789,32 @@ function l(t, a, l, r, n, o, i, d, c, p, h, y, u, f) {
        .style("left", "-2000px")
     };
 
+    // ECC: this is definitely not the proper way to do it!
     s("debug", this, "This"),
     d3.select(this)
-      .append("text")
-      .attr("class", "st-target")
-      .attr("x", 0)
-      .attr("y", y + 15)
-      .style("text-anchor", "middle")
-      .style("font-size", "18px")
-      .text(t.feature_names[_])
-      .on("mousemove", B)
-      .on("mouseleave", S)
-      .style("user-select", "none")
-      .style("-webkit-user-select", "none")
-      .style("-moz-user-select", "none")
-      .style("-ms-user-select", "none");
+      .append("foreignObject")
+      .attr("width", this.firstChild.width.animVal.value - 10)
+      .attr("height", this.firstChild.height.animVal.value - 10)
+      .attr("x", this.firstChild.x.animVal.value + 5)
+      .attr("y", this.firstChild.y.animVal.value + 5)
+      .append("xhtml:div")
+      .html(`<p>${t.feature_names[_]}</p>`)
+
+
+      //.append("text")
+      //.attr("class", "st-target")
+      //.attr("x", 0)
+      //.attr("y", y/2)
+      //.style("text-anchor", "middle")
+      //.style("font-size", "18px")
+      //.text(t.feature_names[_])
+
+      //.on("mousemove", B)
+      //.on("mouseleave", S)
+      //.style("user-select", "none")
+      //.style("-webkit-user-select", "none")
+      //.style("-moz-user-select", "none")
+      //.style("-ms-user-select", "none");
 
     const C = I.domain(),
       N = [C[0], f.data.threshold, C[1]];
@@ -926,51 +947,51 @@ function l(t, a, l, r, n, o, i, d, c, p, h, y, u, f) {
     var k = p - Math.sqrt(25) + 15,
     w = d3.symbol().type(d3.symbolTriangle).size(25);
 
-    x && (
-      s("debug", f, "Exist"),
-      d3.select(this)
-        .append("path")
-        .attr("d", w)
-        .attr("class", "st-triangle")
-        .style("fill", "green")
-        .style("stroke-width", 1)
-        .style("stroke-opacity", 1)
-        .attr("transform", (function(e) {
-          return "translate(" + (-c / 2 + I(t.show_sample[_])) + "," + k + ")"
-        }))
-        .on("mouseover", (function(t) {
-          a.style("opacity", 1),
-          l.style("opacity", 1),
-          d3.select(this)
-            .style("fill", "red")
-            .style("stroke", "red")
-        }))
-        .on("mouseleave", (function(t) {
-          a.style("opacity", 0)
-           .style("top", "-2000px")
-           .style("left", "-2000px"),
-          l.style("opacity", 0)
-           .style("top", "-2000px")
-           .style("left", "-2000px"),
-          d3.select(this)
-            .style("fill", "green")
-            .style("stroke", "green")
-        }))
-        .on("mousemove", (function(e, s) {
-          l.html(t.feature_names.map(((e, s) => {
-            const a = t.show_sample[s];
-            return `<b>${e}:</b> ${isNaN(parseFloat(a))?"N/A":parseFloat(a).toFixed(3)}`
-          })).join(","))
-            .style("top", e.pageY - 10 + "px")
-            .style("left", e.pageX + 10 + "px"),
-          a.html(t.feature_names.map(((e, s) => {
-            const a = t.show_sample[s];
-            return `<b>${e}:</b> ${isNaN(parseFloat(a))?"N/A":parseFloat(a).toFixed(3)}`
-          })).join(","))
-            .style("top", e.pageY - 10 + "px")
-            .style("left", e.pageX + 10 + "px")
-        }))
-    )
+    //x && (
+      //s("debug", f, "Exist"),
+      //d3.select(this)
+        //.append("path")
+        //.attr("d", w)
+        //.attr("class", "st-triangle")
+        //.style("fill", "green")
+        //.style("stroke-width", 1)
+        //.style("stroke-opacity", 1)
+        //.attr("transform", (function(e) {
+          //return "translate(" + (-c / 2 + I(t.show_sample[_])) + "," + k + ")"
+        //}))
+        //.on("mouseover", (function(t) {
+          //a.style("opacity", 1),
+          //l.style("opacity", 1),
+          //d3.select(this)
+            //.style("fill", "red")
+            //.style("stroke", "red")
+        //}))
+        //.on("mouseleave", (function(t) {
+          //a.style("opacity", 0)
+           //.style("top", "-2000px")
+           //.style("left", "-2000px"),
+          //l.style("opacity", 0)
+           //.style("top", "-2000px")
+           //.style("left", "-2000px"),
+          //d3.select(this)
+            //.style("fill", "green")
+            //.style("stroke", "green")
+        //}))
+        //.on("mousemove", (function(e, s) {
+          //l.html(t.feature_names.map(((e, s) => {
+            //const a = t.show_sample[s];
+            //return `<b>${e}:</b> ${isNaN(parseFloat(a))?"N/A":parseFloat(a).toFixed(3)}`
+          //})).join(","))
+            //.style("top", e.pageY - 10 + "px")
+            //.style("left", e.pageX + 10 + "px"),
+          //a.html(t.feature_names.map(((e, s) => {
+            //const a = t.show_sample[s];
+            //return `<b>${e}:</b> ${isNaN(parseFloat(a))?"N/A":parseFloat(a).toFixed(3)}`
+          //})).join(","))
+            //.style("top", e.pageY - 10 + "px")
+            //.style("left", e.pageX + 10 + "px")
+        //}))
+    //)
   }
 }
 
