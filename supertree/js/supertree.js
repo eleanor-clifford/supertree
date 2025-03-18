@@ -365,36 +365,45 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
             })).transition().duration(nt).attr("transform", (function(e) {
               return "translate(" + (t.x + 97.5) + "," + (t.y0 + 55) + ")"
             })).attr("font-size", "1em").remove();
-          L.selectAll(".st-target").style("fill-opacity", 1e-6).style("font-size", "0px").attr("x", -97.5).attr("y", 0), L.selectAll(".st-triangle").style("stroke-width", 0).style("fill-opacity", 0).attr("transform", (function(e) {
-            return "translate(" + -t.x / 6 + "," + -t.y0 / 6 + ")"
-          })).size(0);
+
+          L.selectAll(".st-target")
+           .style("fill-opacity", 1e-6)
+           .style("font-size", "0px")
+           .attr("x", -97.5)
+           .attr("y", 0), L.selectAll(".st-triangle")
+           .style("stroke-width", 0)
+           .style("fill-opacity", 0)
+           .attr("transform", (function(e) {
+             return "translate(" + -t.x / 6 + "," + -t.y0 / 6 + ")"
+           })).size(0);
+
           const O = d3.scaleLinear().domain(0, 10).range([0, 1]),
             q = d3.scaleLinear().domain(10, 0).range([1, 0]);
 
-          L.selectAll(".xAxis")
-            .attr("transform", "translate(-97.5,0)")
-            .call(d3.axisBottom(O)
-            .tickSize(0)
-            .tickPadding(8)
-            .ticks(2)
-            .tickFormat(d3.format(",.1f"))),
-          L.selectAll(".yAxis")
-            .attr("transform", "translate(-97.5,0)")
-            .call(d3.axisRight(q)
-            .tickSize(0)
-            .tickPadding(8)
-            .ticks(2)
-            .tickFormat(d3.format(",.1f"))),
+          //L.selectAll(".xAxis")
+            //.attr("transform", "translate(-97.5,0)")
+            //.call(d3.axisBottom(O)
+            //.tickSize(0)
+            //.tickPadding(8)
+            //.ticks(2)
+            //.tickFormat(d3.format(",.1f"))),
+          //L.selectAll(".yAxis")
+            //.attr("transform", "translate(-97.5,0)")
+            //.call(d3.axisRight(q)
+            //.tickSize(0)
+            //.tickPadding(8)
+            //.ticks(2)
+            //.tickFormat(d3.format(",.1f"))),
           L.selectAll("rect.histogram-background")
             .attr("width", 1e-6)
             .attr("height", 1e-6)
             .attr("x", -97.5)
             .attr("y", 0),
-          L.selectAll("rect.bar")
-            .attr("width", 1e-6)
-            .attr("height", 1e-6)
-            .attr("x", -5)
-            .attr("y", 0),
+          //L.selectAll("rect.bar")
+            //.attr("width", 1e-6)
+            //.attr("height", 1e-6)
+            //.attr("x", -5)
+            //.attr("y", 0),
           L.selectAll("circle")
             .attr("r", 1e-6)
             .attr("cx", -55)
@@ -413,31 +422,44 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
             .attr("x2", 97.5)
             .attr("y1", 40)
             .attr("y2", 55)
-            .attr("stroke-width", 0), L.selectAll("line.average-line")
+            .attr("stroke-width", 0),
+          L.selectAll("line.average-line")
             .attr("transform", "translate(-195,-40)")
             .attr("x1", 97.5)
             .attr("x2", 97.5)
             .attr("y1", 40)
             .attr("y2", 40)
-            .attr("stroke-width", 0), H.selectAll("line")
+            .attr("stroke-width", 0),
+          H.selectAll("line")
             .attr("x2", 0)
-            .attr("y2", 0), L.selectAll(".yAxis-text")
-            .attr("transform", "translate(0,-40)")
-            .style("fill-opacity", 1e-6)
-            .style("font-size", "0px")
-            .attr("x", 0), L.selectAll(".xAxis-text")
-            .attr("transform", "translate(0,-40)")
-            .style("fill-opacity", 1e-6)
-            .style("font-size", "0px"), L.selectAll(".st-pie-target")
+            .attr("y2", 0),
+          //L.selectAll(".yAxis-text")
+            //.attr("transform", "translate(0,-40)")
+            //.style("fill-opacity", 1e-6)
+            //.style("font-size", "0px")
+            //.attr("x", 0),
+          //L.selectAll(".xAxis-text")
+            //.attr("transform", "translate(0,-40)")
+            //.style("fill-opacity", 1e-6)
+            //.style("font-size", "0px"),
+          L.selectAll(".st-pie-target")
             .attr("y", (function(t, e) {
+              return -10 - 2 * Math.max(20, Math.min(w, k) / 2 * Math.sqrt(t.data.classDistributionValue / v)) - 40 * e
+            }))
+            .attr("transform", "translate(-97.5,0)")
+            .style("fill-opacity", 1e-6)
+            .style("font-size", "0px"), L.selectAll(".st-pie-target2")
+            .attr("y", (function(t, e) {
+              return -10 - 2 * Math.max(20, Math.min(w, k) / 2 * Math.sqrt(t.data.classDistributionValue / v)) - 40 * e
+            }))
+            .attr("transform", "translate(-97.5,0)")
+            .style("fill-opacity", 1e-6)
+            .style("font-size", "0px");
 
-            return -10 - 2 * Math.max(20, Math.min(w, k) / 2 * Math.sqrt(t.data.classDistributionValue / v)) - 40 * e
-          })).attr("transform", "translate(-97.5,0)").style("fill-opacity", 1e-6).style("font-size", "0px"), L.selectAll(".st-pie-target2").attr("y", (function(t, e) {
-            return -10 - 2 * Math.max(20, Math.min(w, k) / 2 * Math.sqrt(t.data.classDistributionValue / v)) - 40 * e
-          })).attr("transform", "translate(-97.5,0)").style("fill-opacity", 1e-6).style("font-size", "0px");
           let P = V.selectAll("#st-link-treeID").data(b, (function(t) {
             return t.id
           }));
+
           var G = P.enter().insert("path", "g").attr("class", "st-link").attr("id", "st-link-treeID").attr("d", (function(e) {
               var s = {
                 x: t.cx,
@@ -776,24 +798,24 @@ function l(t, a, l, r, n, o, i, d, c, p, h, y, u, f) {
     const C = I.domain(),
       N = [C[0], f.data.threshold, C[1]];
 
-    d3.select(this)
-      .append("g")
-      .attr("class", "xAxis")
-      .attr("transform", `translate(${-c/2}, ${p})`)
-      .call(d3.axisBottom(I)
-      .tickSize(0)
-      .tickPadding(8)
-      .tickValues(N)
-      .tickFormat(d3.format(",.1f")))
-      .selectAll(".tick")
-      .attr("class", "xAxis-text")
-      .style("user-select", "none")
-      .style("-webkit-user-select", "none")
-      .style("-moz-user-select", "none")
-      .style("-ms-user-select", "none")
-      .style("fill", "black"), d3.select(this)
-      .selectAll(".domain")
-      .style("stroke", "black");
+    //d3.select(this)
+      //.append("g")
+      //.attr("class", "xAxis")
+      //.attr("transform", `translate(${-c/2}, ${p})`)
+      //.call(d3.axisBottom(I)
+      //.tickSize(0)
+      //.tickPadding(8)
+      //.tickValues(N)
+      //.tickFormat(d3.format(",.1f")))
+      //.selectAll(".tick")
+      //.attr("class", "xAxis-text")
+      //.style("user-select", "none")
+      //.style("-webkit-user-select", "none")
+      //.style("-moz-user-select", "none")
+      //.style("-ms-user-select", "none")
+      //.style("fill", "black"), d3.select(this)
+      //.selectAll(".domain")
+      //.style("stroke", "black");
 
     const T = d3.scaleLinear().range([p, 0]),
       X = d3.select(this).append("g"),
@@ -823,16 +845,16 @@ function l(t, a, l, r, n, o, i, d, c, p, h, y, u, f) {
         .tickValues(O)
         .tickFormat(d3.format(",.0f"))
     )
-      .attr("class", "yAxis")
-      .attr("transform", `translate(${-c/2-e},0)`)
-      .call((t => t.select(".domain").remove()))
-      .style("user-select", "none")
-      .style("-webkit-user-select", "none")
-      .style("-moz-user-select", "none")
-      .style("-ms-user-select", "none")
-      .style("fill", "black"), d3.select(this)
-      .selectAll(".domain")
-      .style("stroke", "black");
+      //.attr("class", "yAxis")
+      //.attr("transform", `translate(${-c/2-e},0)`)
+      //.call((t => t.select(".domain").remove()))
+      //.style("user-select", "none")
+      //.style("-webkit-user-select", "none")
+      //.style("-moz-user-select", "none")
+      //.style("-ms-user-select", "none")
+      //.style("fill", "black"), d3.select(this)
+      //.selectAll(".domain")
+      //.style("stroke", "black");
 
     const R = function(t) {
       l.style("opacity", 1),
@@ -870,36 +892,36 @@ function l(t, a, l, r, n, o, i, d, c, p, h, y, u, f) {
       .attr("class", "layer")
       .style("fill", ((t, e) => u[M[e]]))
       .on("click", (function() { d(source, P) }))
-      .selectAll("rect.bar")
-      .data(((t, e) => t.map((t => ({ ...t, class: M[e] })))))
-      .enter() // TODO: here!!!
-      .append("rect")
-      .attr("class", "bar")
+      //.selectAll("rect.bar")
+      //.data(((t, e) => t.map((t => ({ ...t, class: M[e] })))))
+      //.enter() // TODO: here!!!
+      //.append("rect")
+      //.attr("class", "bar")
       //.attr("x", (function(t){console.log(t); console.log(t.data[0].x0); return I(t.data[0].x0)}))
       //.attr("y", (function(t){console.log(t); console.log(T(t[1])); return isNaN(T(t[1])) ? 0 : T(t[1])}))
-      .attr("x", (t => I(t.data[0].x0)))
-      .attr("y", (t => isNaN(T(t[1])) ? 0 : T(t[1])))
-      .attr("height", (t => isNaN(T(t[0]) - T(t[1])) ? 0 : T(t[0]) - T(t[1])))
-      .attr("width", (t => I(t.data[0].x1) - I(t.data[0].x0)))
-      .attr("transform", `translate(${-c/2},0)`)
-      .attr("stroke", "black")
-      .on("mouseover", R)
-      .on("mouseleave", q)
-      .on("mousemove", H), s("debug", "abc");
+      //.attr("x", (t => I(t.data[0].x0)))
+      //.attr("y", (t => isNaN(T(t[1])) ? 0 : T(t[1])))
+      //.attr("height", (t => isNaN(T(t[0]) - T(t[1])) ? 0 : T(t[0]) - T(t[1])))
+      //.attr("width", (t => I(t.data[0].x1) - I(t.data[0].x0)))
+      //.attr("transform", `translate(${-c/2},0)`)
+      //.attr("stroke", "black")
+      //.on("mouseover", R)
+      //.on("mouseleave", q)
+      //.on("mousemove", H), s("debug", "abc");
 
     var v = parseFloat(f.data.threshold).toFixed(3);
 
-    d3.select(this)
-      .append("line")
-      .attr("class", "threshold-line")
-      .attr("x1", I(v))
-      .attr("x2", I(v))
-      .attr("y1", 0)
-      .attr("y2", p)
-      .attr("stroke", "black")
-      .attr("transform", `translate(${-c/2},0)`)
-      .attr("stroke-width", 2)
-      .attr("stroke-dasharray", "5,5");
+    //d3.select(this)
+      //.append("line")
+      //.attr("class", "threshold-line")
+      //.attr("x1", I(v))
+      //.attr("x2", I(v))
+      //.attr("y1", 0)
+      //.attr("y2", p)
+      //.attr("stroke", "black")
+      //.attr("transform", `translate(${-c/2},0)`)
+      //.attr("stroke-width", 2)
+      //.attr("stroke-dasharray", "5,5");
 
     var k = p - Math.sqrt(25) + 15,
     w = d3.symbol().type(d3.symbolTriangle).size(25);
@@ -1113,11 +1135,53 @@ function n(t, a, l, r, n, o, i, d, c, p, h) {
     const _ = d3.scaleLinear().domain(xExtent).nice().range([0, l]),
       F = _.domain(),
       A = [F[0], t.data.threshold, F[1]];
-    d3.select(this).append("g").attr("transform", `translate(${-l/2}, ${r})`).attr("class", "xAxis").call(d3.axisBottom(_).tickSize(0).tickValues(A).tickPadding(8)).selectAll(".tick").attr("class", "xAxis-text").style("user-select", "none").style("-webkit-user-select", "none").style("-moz-user-select", "none").style("-ms-user-select", "none").style("fill", "black"), d3.select(this).selectAll(".domain").style("stroke", "black"), yExtent = d3.extent(a.data_target);
+
+    //d3.select(this)
+      //.append("g")
+      //.attr("transform", `translate(${-l/2}, ${r})`)
+      //.attr("class", "xAxis")
+      //.call(d3.axisBottom(_)
+      //.tickSize(0)
+      //.tickValues(A)
+      //.tickPadding(8))
+      //.selectAll(".tick")
+      //.attr("class", "xAxis-text")
+      //.style("user-select", "none")
+      //.style("-webkit-user-select", "none")
+      //.style("-moz-user-select", "none")
+      //.style("-ms-user-select", "none")
+      //.style("fill", "black"), d3.select(this)
+      //.selectAll(".domain")
+      //.style("stroke", "black"),
+    yExtent = d3.extent(a.data_target);
+
     const D = d3.scaleLinear().domain(yExtent).nice().range([r, 0]),
       E = D.domain(),
       $ = [E[0], E[0] + (E[1] - E[0]) / 2, E[1]];
-    s("debug", $, "yTickValues"), d3.select(this).append("g").call(d3.axisRight(D).tickSize(0).tickPadding(4).tickValues($).tickFormat(d3.format(",.0f"))).call((t => t.select(".domain").remove())).attr("transform", `translate(${-l/2-e}, 0)`).attr("class", "yAxis").selectAll(".tick").attr("class", "yAxis-text").style("user-select", "none").style("-webkit-user-select", "none").style("-moz-user-select", "none").style("-ms-user-select", "none").style("fill", "black"), d3.select(this).selectAll(".domain").style("stroke", "black");
+
+    //s("debug", $, "yTickValues"),
+    //d3.select(this)
+      //.append("g")
+      //.call(d3.axisRight(D)
+        //.tickSize(0)
+        //.tickPadding(4)
+        //.tickValues($)
+        //.tickFormat(d3.format(",.0f"))
+      //)
+      //.call((t => t.select(".domain").remove()))
+      //.attr("transform", `translate(${-l/2-e}, 0)`)
+      //.attr("class", "yAxis")
+      //.selectAll(".tick")
+        //.attr("class", "yAxis-text")
+        //.style("user-select", "none")
+        //.style("-webkit-user-select", "none")
+        //.style("-moz-user-select", "none")
+        //.style("-ms-user-select", "none")
+        //.style("fill", "black"),
+    d3.select(this)
+      .selectAll(".domain")
+        .style("stroke", "black");
+
     const M = function(t) {
         c.style("opacity", 1), d3.select(this).style("fill", "red"), p.style("opacity", 1), d3.select(this).style("fill", "red")
       },
@@ -1147,7 +1211,69 @@ function n(t, a, l, r, n, o, i, d, c, p, h) {
         c.style("opacity", 0).style("top", "-2000px").style("left", "-2000px"), p.style("opacity", 0).style("top", "-2000px").style("left", "-2000px")
       };
     var f = parseFloat(t.data.threshold).toFixed(3);
-    d3.select(this).append("line").attr("class", "threshold-line").attr("x1", _(f)).attr("x2", _(f)).attr("y1", 0).attr("y2", r).attr("stroke", "black").attr("transform", `translate(${-l/2},0)`).attr("stroke-width", 2).attr("stroke-dasharray", "5,5").style("user-select", "none").style("-webkit-user-select", "none").style("-moz-user-select", "none").style("-ms-user-select", "none"), s("debug", w.averageBelowThreshold, "avarage 1:"), isNaN(w.averageBelowThreshold) || d3.select(this).append("line").attr("class", "average-line").attr("x1", 0).attr("x2", _(f)).attr("y1", D(w.averageBelowThreshold)).attr("y2", D(w.averageBelowThreshold)).attr("stroke", "black").attr("transform", `translate(${-n/2},0)`).attr("stroke-width", 2).attr("stroke-dasharray", "5,5").on("mouseover", I).on("mouseleave", B).on("mousemove", C).style("user-select", "none").style("-webkit-user-select", "none").style("-moz-user-select", "none").style("-ms-user-select", "none"), isNaN(w.averageAboveOrEqualThreshold) || d3.select(this).append("line").attr("class", "average-line").attr("x1", _(f)).attr("x2", _(F[1])).attr("y1", D(w.averageAboveOrEqualThreshold)).attr("y2", D(w.averageAboveOrEqualThreshold)).attr("stroke", "black").attr("transform", `translate(${-n/2},0)`).attr("stroke-width", 2).attr("stroke-dasharray", "5,5").on("mouseover", I).on("mouseleave", B).on("mousemove", N), d3.select(this).append("text").attr("class", "st-target").attr("x", 0).attr("y", d + 15).style("text-anchor", "middle").style("font-size", "18px").text(a.feature_names[t.data.feature]).on("mousemove", T).on("mouseleave", X).style("user-select", "none").style("-webkit-user-select", "none").style("-moz-user-select", "none").style("-ms-user-select", "none");
+
+    //d3.select(this)
+      //.append("line")
+      //.attr("class", "threshold-line")
+      //.attr("x1", _(f))
+      //.attr("x2", _(f))
+      //.attr("y1", 0)
+      //.attr("y2", r)
+      //.attr("stroke", "black")
+      //.attr("transform", `translate(${-l/2},0)`)
+      //.attr("stroke-width", 2)
+      //.attr("stroke-dasharray", "5,5")
+      //.style("user-select", "none")
+      //.style("-webkit-user-select", "none")
+      //.style("-moz-user-select", "none")
+      //.style("-ms-user-select", "none"),
+    //s("debug", w.averageBelowThreshold, "avarage 1:"),
+    //isNaN(w.averageBelowThreshold) || d3.select(this)
+      //.append("line")
+      //.attr("class", "average-line")
+      //.attr("x1", 0)
+      //.attr("x2", _(f))
+      //.attr("y1", D(w.averageBelowThreshold))
+      //.attr("y2", D(w.averageBelowThreshold))
+      //.attr("stroke", "black")
+      //.attr("transform", `translate(${-n/2},0)`)
+      //.attr("stroke-width", 2)
+      //.attr("stroke-dasharray", "5,5")
+      //.on("mouseover", I)
+      //.on("mouseleave", B)
+      //.on("mousemove", C)
+      //.style("user-select", "none")
+      //.style("-webkit-user-select", "none")
+      //.style("-moz-user-select", "none")
+      //.style("-ms-user-select", "none"),
+    //isNaN(w.averageAboveOrEqualThreshold) || d3.select(this)
+      //.append("line")
+      //.attr("class", "average-line")
+      //.attr("x1", _(f))
+      //.attr("x2", _(F[1]))
+      //.attr("y1", D(w.averageAboveOrEqualThreshold))
+      //.attr("y2", D(w.averageAboveOrEqualThreshold))
+      //.attr("stroke", "black")
+      //.attr("transform", `translate(${-n/2},0)`)
+      //.attr("stroke-width", 2)
+      //.attr("stroke-dasharray", "5,5")
+      //.on("mouseover", I)
+      //.on("mouseleave", B)
+      //.on("mousemove", N), d3.select(this)
+      //.append("text")
+      //.attr("class", "st-target")
+      //.attr("x", 0)
+      //.attr("y", d + 15)
+      //.style("text-anchor", "middle")
+      //.style("font-size", "18px")
+      //.text(a.feature_names[t.data.feature])
+      //.on("mousemove", T)
+      //.on("mouseleave", X)
+      //.style("user-select", "none")
+      //.style("-webkit-user-select", "none")
+      //.style("-moz-user-select", "none")
+      //.style("-ms-user-select", "none");
+
     var m = o - Math.sqrt(25) + 15,
       x = d3.symbol().type(d3.symbolTriangle).size(25);
     u && (s("debug", t, "Exist"), d3.select(this).append("path").attr("d", x).attr("class", "st-triangle").style("stroke-width", 1).style("stroke-opacity", 1).style("fill", "green").attr("transform", (function(t) {
@@ -1219,7 +1345,28 @@ function o(t, a, l, r, n, o, i, d, c) {
     const A = d3.scaleLinear().domain(d3.extent(yExtent)).nice().range([r, 0]),
       D = A.domain(),
       E = [D[0], D[0] + (D[1] - D[0]) / 2, D[1]];
-    s("debug", E, "yTickValues"), d3.select(this).append("g").call(d3.axisRight(A).tickSize(0).tickPadding(4).tickValues(E).tickFormat(d3.format(",.0f"))).call((t => t.select(".domain").remove())).attr("transform", `translate(${-l/2+15-e}, 0)`).attr("class", "yAxis").style("user-select", "none").style("-webkit-user-select", "none").style("-moz-user-select", "none").style("-ms-user-select", "none").style("fill", "black"), d3.select(this).selectAll(".domain").style("stroke", "black");
+
+    //s("debug", E, "yTickValues"),
+    //d3.select(this)
+      //.append("g")
+      //.call(d3.axisRight(A)
+      //.tickSize(0)
+        //.tickPadding(4)
+        //.tickValues(E)
+        //.tickFormat(d3.format(",.0f"))
+      //)
+      //.call((t => t.select(".domain").remove()))
+      //.attr("transform", `translate(${-l/2+15-e}, 0)`)
+      //.attr("class", "yAxis")
+      //.style("user-select", "none")
+      //.style("-webkit-user-select", "none")
+      //.style("-moz-user-select", "none")
+      //.style("-ms-user-select", "none")
+      //.style("fill", "black"),
+      //d3.select(this)
+      //.selectAll(".domain")
+        //.style("stroke", "black");
+
     const $ = function(t) {
         o.style("opacity", 1), d3.select(this).style("fill", "red"), i.style("opacity", 1), d3.select(this).style("fill", "red")
       },
@@ -1970,29 +2117,62 @@ a();
 
     function h(h) {
       var d = null == r ? n.ticks ? n.ticks.apply(n, e) : n.domain() : r,
-        p = null == i ? n.tickFormat ? n.tickFormat.apply(n, e) : mt : i,
-        g = Math.max(o, 0) + u,
-        y = n.range(),
-        v = +y[0] + c,
-        _ = +y[y.length - 1] + c,
-        b = (n.bandwidth ? kt : Nt)(n.copy(), c),
-        m = h.selection ? h.selection() : h,
-        x = m.selectAll(".domain").data([null]),
-        w = m.selectAll(".tick").data(d, n).order(),
-        M = w.exit(),
-        T = w.enter().append("g").attr("class", "tick"),
-        A = w.select("line"),
-        S = w.select("text");
-      x = x.merge(x.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor")), w = w.merge(T), A = A.merge(T.append("line").attr("stroke", "currentColor").attr(s + "2", f * o)), S = S.merge(T.append("text").attr("fill", "currentColor").attr(s, f * g).attr("dy", t === xt ? "0em" : t === Mt ? "0.71em" : "0.32em")), h !== m && (x = x.transition(h), w = w.transition(h), A = A.transition(h), S = S.transition(h), M = M.transition(h).attr("opacity", At).attr("transform", (function(t) {
-        return isFinite(t = b(t)) ? l(t + c) : this.getAttribute("transform")
-      })), T.attr("opacity", At).attr("transform", (function(t) {
-        var n = this.parentNode.__axis;
-        return l((n && isFinite(n = n(t)) ? n : b(t)) + c)
-      }))), M.remove(), x.attr("d", t === Tt || t === wt ? a ? "M" + f * a + "," + v + "H" + c + "V" + _ + "H" + f * a : "M" + c + "," + v + "V" + _ : a ? "M" + v + "," + f * a + "V" + c + "H" + _ + "V" + f * a : "M" + v + "," + c + "H" + _), w.attr("opacity", 1).attr("transform", (function(t) {
-        return l(b(t) + c)
-      })), A.attr(s + "2", f * o), S.attr(s, f * g).text(p), m.filter(Ct).attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", t === wt ? "start" : t === Tt ? "end" : "middle"), m.each((function() {
-        this.__axis = b
-      }))
+          p = null == i ? n.tickFormat ? n.tickFormat.apply(n, e) : mt : i,
+          g = Math.max(o, 0) + u,
+          y = n.range(),
+          v = +y[0] + c,
+          _ = +y[y.length - 1] + c,
+          b = (n.bandwidth ? kt : Nt)(n.copy(), c),
+          m = h.selection ? h.selection() : h,
+          x = m.selectAll(".domain").data([null]),
+          w = m.selectAll(".tick").data(d, n).order(),
+          M = w.exit(),
+          T = w.enter().append("g").attr("class", "tick"),
+          A = w.select("line"),
+          S = w.select("text");
+
+      //x = x.merge(
+        //x.enter()
+        //.insert("path", ".tick")
+        //.attr("class", "domain")
+        //.attr("stroke", "currentColor")
+      //),
+      //w = w.merge(T),
+      //A = A.merge(
+        //T.append("line")
+         //.attr("stroke", "currentColor")
+         //.attr(s + "2", f * o)
+      //),
+      //S = S.merge(
+        //T.append("text")
+         //.attr("fill", "currentColor")
+         //.attr(s, f * g)
+         //.attr("dy", t === xt ? "0em" : t === Mt ? "0.71em" : "0.32em")), h !== m && (x = x.transition(h), w = w.transition(h), A = A.transition(h), S = S.transition(h), M = M.transition(h)
+         //.attr("opacity", At)
+         //.attr("transform", (function(t) {
+           //return isFinite(t = b(t)) ? l(t + c) : this.getAttribute("transform")
+         //})),
+        //T.attr("opacity", At).attr("transform", (function(t) {
+          //var n = this.parentNode.__axis;
+          //return l((n && isFinite(n = n(t)) ? n : b(t)) + c)
+        //}))
+      //),
+      M.remove(),
+      x.attr("d", t === Tt || t === wt ? a ? "M" + f * a + "," + v + "H" + c + "V" + _ + "H" + f * a : "M" + c + "," + v + "V" + _ : a ? "M" + v + "," + f * a + "V" + c + "H" + _ + "V" + f * a : "M" + v + "," + c + "H" + _),
+      w.attr("opacity", 1)
+       .attr("transform", (function(t) {
+         return l(b(t) + c)
+       })),
+      A.attr(s + "2", f * o),
+      S.attr(s, f * g)
+       .text(p), m.filter(Ct)
+       .attr("fill", "none")
+       .attr("font-size", 10)
+       .attr("font-family", "sans-serif")
+       .attr("text-anchor", t === wt ? "start" : t === Tt ? "end" : "middle"),
+      m.each((function() {
+          this.__axis = b
+        }))
     }
     return h.scale = function(t) {
       return arguments.length ? (n = t, h) : n
@@ -14916,12 +15096,44 @@ a();
         T = w.enter().append("g").attr("class", "tick"),
         A = w.select("line"),
         S = w.select("text");
-      x = x.merge(x.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor")), w = w.merge(T), A = A.merge(T.append("line").attr("stroke", "currentColor").attr(s + "2", f * o)), S = S.merge(T.append("text").attr("fill", "currentColor").attr(s, f * g).attr("dy", t === xt ? "0em" : t === Mt ? "0.71em" : "0.32em")), h !== m && (x = x.transition(h), w = w.transition(h), A = A.transition(h), S = S.transition(h), M = M.transition(h).attr("opacity", At).attr("transform", (function(t) {
-        return isFinite(t = b(t)) ? l(t + c) : this.getAttribute("transform")
-      })), T.attr("opacity", At).attr("transform", (function(t) {
-        var n = this.parentNode.__axis;
-        return l((n && isFinite(n = n(t)) ? n : b(t)) + c)
-      }))), M.remove(), x.attr("d", t === Tt || t === wt ? a ? "M" + f * a + "," + v + "H" + c + "V" + _ + "H" + f * a : "M" + c + "," + v + "V" + _ : a ? "M" + v + "," + f * a + "V" + c + "H" + _ + "V" + f * a : "M" + v + "," + c + "H" + _), w.attr("opacity", 1).attr("transform", (function(t) {
+
+      //x = x.merge(
+        //x.enter()
+         //.insert("path", ".tick")
+         //.attr("class", "domain")
+         //.attr("stroke", "currentColor")
+      //),
+      //w = w.merge(T),
+      //A = A.merge(
+        //T.append("line")
+         //.attr("stroke", "currentColor")
+         //.attr(s + "2", f * o)
+      //),
+      //S = S.merge(
+        //T.append("text")
+         //.attr("fill", "currentColor")
+         //.attr(s, f * g)
+         //.attr("dy", t === xt ? "0em" : t === Mt ? "0.71em" : "0.32em")
+      //),
+      h !== m && (
+        x = x.transition(h),
+        w = w.transition(h),
+        A = A.transition(h),
+        S = S.transition(h),
+        M = M.transition(h)
+             .attr("opacity", At)
+             .attr("transform", (
+               function(t) {
+                 return isFinite(t = b(t)) ? l(t + c) : this.getAttribute("transform")
+               }
+             )),
+        T.attr("opacity", At)
+         .attr("transform", (function(t) {
+           var n = this.parentNode.__axis;
+           return l((n && isFinite(n = n(t)) ? n : b(t)) + c)
+        }))
+      ),
+      M.remove(), x.attr("d", t === Tt || t === wt ? a ? "M" + f * a + "," + v + "H" + c + "V" + _ + "H" + f * a : "M" + c + "," + v + "V" + _ : a ? "M" + v + "," + f * a + "V" + c + "H" + _ + "V" + f * a : "M" + v + "," + c + "H" + _), w.attr("opacity", 1).attr("transform", (function(t) {
         return l(b(t) + c)
       })), A.attr(s + "2", f * o), S.attr(s, f * g).text(p), m.filter(Ct).attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", t === wt ? "start" : t === Tt ? "end" : "middle"), m.each((function() {
         this.__axis = b
