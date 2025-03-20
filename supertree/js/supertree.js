@@ -97,7 +97,6 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
           }
         }(J),
         st = Q.data_feature[0].length;
-        console.log(et);
         var a = Array.from({
             length: st
           }, (() => [1 / 0, -1 / 0])),
@@ -512,7 +511,6 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
                 //for (let t = 0; t < e.data.class_distribution[0].length; t++)
                   //s += parseInt(e.data.class_distribution[0][t]);
 
-                console.log(e);
                 z.html(`<b>Class distribution in link:</b> ${e.data.class_distribution[0]}`)
                  .style("top", t.pageY - 10 + "px")
                  .style("left", t.pageX + 10 + "px"),
@@ -832,8 +830,6 @@ function l(t, a, l, r, n, o, i, d, c, p, h, y, u, f) {
       .attr("y", this.firstChild.y.animVal.value + 5)
       .append("xhtml:div")
       .html(`<p>${t.feature_names[_]}</p>`)
-
-    console.log(f.data.keymap[f.data.key]);
 
     if (f.data.key !== null) {
       d3.select(this)
