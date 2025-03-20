@@ -62,7 +62,6 @@ class Node:
             "is_leaf": self.is_leaf,
             "start_end_x_axis": [convert(val) for val in self.start_end_x_axis] if self.start_end_x_axis is not None else None,
             "key": self.key,
-            "keymap": {"not_applicable": "NA", "text_a": "A", "text_b": "B"},
             "node_order": self.node_order,
         }
 

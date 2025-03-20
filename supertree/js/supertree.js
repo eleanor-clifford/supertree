@@ -849,7 +849,7 @@ function l(t, a, l, r, n, o, i, d, c, p, h, y, u, f) {
           })(this)
         )
         .append("xhtml:div")
-        .html(`<p>${f.data.keymap[f.data.key]}</p>`)
+        .html(`<p>${f.data.key}</p>`)
     }
 
       //.append("text")

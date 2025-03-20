@@ -80,6 +80,7 @@ class SuperTree:
         feature_names: Optional[List[str]] = None,
         target_names: Optional[Union[str, List[str]]] = None,
         license_key: str = "key",
+        node_order: list = None,
     ):
 
         valid_model_classes = [
@@ -136,6 +137,7 @@ class SuperTree:
 
         self.nodes = []
         self.node_list = []
+        self.node_order = node_order
         self.model = model
         self.model_name = model.__class__.__name__
         self.model_type = self.which_model()
@@ -744,7 +746,6 @@ class SuperTree:
                         "right": right_children,
                     }
                 }
-                # print(json.dumps(stringify(node_info), indent=2))
                 self.node_list.append(node_info)
         if model_name == "LightGBMBooster" or model_name in ("LGBMRegressor", "LGBMClassifier"):
             if model_name != "LightGBMBooster":
@@ -814,12 +815,11 @@ class SuperTree:
                 assert len(choices) == 1  # cannot handle multiple choices for now
                 children[choices[0]] = succ_idx
 
-            # feature = None
-            feature = 0 # TODO: !!!!
             if node.tag.split_variable in self.feature_names:
                 feature = self.feature_names.index(node.tag.split_variable)
             elif node.tag.split_variable is not None:
                 print(f"WARNING: {node.tag.split_variable} not in feature_names")
+                feature = 0
 
             node_info = {
                 "index": i,
@@ -831,12 +831,8 @@ class SuperTree:
                 "samples": int(sum(node.tag.members.values())),
                 "is_leaf": node.is_leaf(),
                 "child_indices": children,
-                # "node_order": sorted(list(all_node_keys)),
-                # "node_order": list(children.keys()),
-                # "node_order": ['text_a', 'not_applicable or text_a', 'not_applicable', 'text_a or text_b', 'not_applicable_or_text_b', 'text_b'],
-                "node_order": ['text_a', 'not_applicable', 'text_b'], # !!!
+                "node_order": self.node_order,
             }
-            print(json.dumps(stringify(node_info), indent=2))
             self.node_list.append(node_info)
 
     def collect_node_info_lgbm(self, node, depth=0):
