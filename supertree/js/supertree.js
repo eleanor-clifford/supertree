@@ -509,8 +509,16 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
             .on("mousemove", (function(t, e) {
               if (Q.tree_type == u) {
                 var s = 0;
-                for (let t = 0; t < e.data.class_distribution[0].length; t++) s += parseInt(e.data.class_distribution[0][t]);
-                z.html(`<b>Class distribution in link:</b>: ${s}`).style("top", t.pageY - 10 + "px").style("left", t.pageX + 10 + "px"), I.html(`<b>Class distribution in link:</b>: ${s}`).style("top", t.pageY - 10 + "px").style("left", t.pageX + 10 + "px")
+                //for (let t = 0; t < e.data.class_distribution[0].length; t++)
+                  //s += parseInt(e.data.class_distribution[0][t]);
+
+                console.log(e);
+                z.html(`<b>Class distribution in link:</b> ${e.data.class_distribution[0]}`)
+                 .style("top", t.pageY - 10 + "px")
+                 .style("left", t.pageX + 10 + "px"),
+                I.html(`<b>Class distribution in link:</b> ${e.data.class_distribution[0]}`)
+                 .style("top", t.pageY - 10 + "px")
+                 .style("left", t.pageX + 10 + "px")
               }
               if (Q.tree_type == y) {
                 s = e.data.samples;
@@ -519,40 +527,6 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
             })),
           U = 0,
           W = 0;
-
-          console.log(P);
-
-          P.enter()
-           .insert("text")
-            .attr("dy", 20)
-           .append("textPath")
-             .attr("side", function(d) {
-               const side = (d.data.node_order.indexOf(d.data.key) + 1) / d.data.node_order.length;
-               if (side < 0.5) {
-                 return "right"
-               } else if (side == 0.5) {
-                 return "";
-               } else {
-                 return "left";
-               }
-             })
-             .attr("startOffset", function(d) {
-               const side = (d.data.node_order.indexOf(d.data.key) + 1) / d.data.node_order.length;
-               if (side < 0.5) {
-                 return "30%"
-               } else if (side == 0.5) {
-                 return "80%";
-               } else {
-                 return "70%";
-               }
-             })
-             .attr("xlink:href", function(d) {
-               return `#st-link-treeID-${d.data.id}`;
-             })
-             .style("text-anchor", "middle")
-             .text(function(d) {
-               return `${d.data.keymap[d.data.key]}`;
-             })
 
           Q.tree_type == y && (W = J.samples);
           for (let t = 0; t < J.class_distribution[0].length; t++) U += parseInt(J.class_distribution[0][t]);
@@ -848,7 +822,7 @@ function l(t, a, l, r, n, o, i, d, c, p, h, y, u, f) {
        .style("left", "-2000px")
     };
 
-    // ECC: this is definitely not the proper way to do it!
+    // ECC: dislaimer: I don't know what I'm doing
     s("debug", this, "This"),
     d3.select(this)
       .append("foreignObject")
@@ -859,6 +833,28 @@ function l(t, a, l, r, n, o, i, d, c, p, h, y, u, f) {
       .append("xhtml:div")
       .html(`<p>${t.feature_names[_]}</p>`)
 
+    console.log(f.data.keymap[f.data.key]);
+
+    if (f.data.key !== null) {
+      d3.select(this)
+        .append("foreignObject")
+        .attr("width", this.firstChild.width.animVal.value - 10)
+        .attr("height", 40)
+        .attr("y", this.firstChild.y.animVal.value - 40)
+        .attr("x", this.firstChild.x.animVal.value + (
+          function(a) {
+            // ECC: again, I don't know what I'm doing
+            const side = (f.data.node_order.indexOf(f.data.key) + 1) / f.data.node_order.length;
+            if (side <= 0.5) {
+              return -a.firstChild.width.animVal.value/5;
+            } else {
+              return a.firstChild.width.animVal.value/5;
+            }
+          })(this)
+        )
+        .append("xhtml:div")
+        .html(`<p>${f.data.keymap[f.data.key]}</p>`)
+    }
 
       //.append("text")
       //.attr("class", "st-target")
