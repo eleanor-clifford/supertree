@@ -19,6 +19,7 @@ class Node:
         self.nodes = dict()
         self.start_end_x_axis = []
         self.node_order = node_order or ["left", "right"]
+        self.key = None  # I can't remember if this is duplicated or no
 
 
     def to_dict(self):
@@ -60,7 +61,9 @@ class Node:
             "treeclass": convert(self.treeclass),
             "is_leaf": self.is_leaf,
             "start_end_x_axis": [convert(val) for val in self.start_end_x_axis] if self.start_end_x_axis is not None else None,
-
+            "key": self.key,
+            "keymap": {"not_applicable": "NA", "text_a": "A", "text_b": "B"},
+            "node_order": self.node_order,
         }
 
         node_dict["node_children"] = []
@@ -71,6 +74,7 @@ class Node:
 
 
     def add_node(self, key, node):
+        node.key = key
         self.nodes[key] = node
 
     def __str__(self):

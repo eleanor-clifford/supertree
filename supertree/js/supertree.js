@@ -88,16 +88,15 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
         } = e;
         let tt = 0;
         let et = function t(e) {
-
-            return e.id = tt++, e.is_leaf ? {
-              children: [],
-              ...e
-            } : {
-              children: [...e.node_children].map(t),
-              ...e
-            }
-          }(J),
-          st = Q.data_feature[0].length;
+          return e.id = tt++, e.is_leaf ? {
+            children: [],
+            ...e
+          } : {
+            children: [...e.node_children].map(t),
+            ...e
+          }
+        }(J),
+        st = Q.data_feature[0].length;
         console.log(et);
         var a = Array.from({
             length: st
@@ -189,9 +188,9 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
               s++, e.children && e.children.forEach((function(e) {
                 c = Math.max(s, c), t(e, s, a)
               }))
-            }(T, 0, c), V.selectAll(".treeNode").remove(), V.selectAll("#st-link-treeID").remove(), V.selectAll("g").remove(), K(T = d3.hierarchy(et), 0, c + 1), s("debug", V, "treeSVG"), B = 0
+            }(T, 0, c), V.selectAll(".treeNode").remove(), V.selectAll(".st-link-treeID").remove(), V.selectAll("g").remove(), K(T = d3.hierarchy(et), 0, c + 1), s("debug", V, "treeSVG"), B = 0
           }
-          d3.selectAll("#st-link-treeID").style("stroke", "black"), minSample = 1 / 0, Y = 0, X = 0,
+          d3.selectAll(".st-link-treeID").style("stroke", "black"), minSample = 1 / 0, Y = 0, X = 0,
             function t(e, s) {
               s++, X = Math.max(X, s), e.children ? e.children.forEach((function(e) {
                 t(e, s)
@@ -466,23 +465,48 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
             .style("fill-opacity", 1e-6)
             .style("font-size", "0px");
 
-          let P = V.selectAll("#st-link-treeID").data(b, (function(t) {
+          let P = V.selectAll(".st-link-treeID").data(b, (function(t) {
             return t.id
           }));
 
-          var G = P.enter().insert("path", "g").attr("class", "st-link").attr("id", "st-link-treeID").attr("d", (function(e) {
-              var s = {
-                x: t.cx,
-                y: t.cy
-              };
-              return Z(s, s)
-            })).style("fill", "none").style("stroke", "#000").style("stroke-width", "2px").on("mouseover", (function(t) {
+          var G = P.enter()
+            .insert("path", "g")
+            .attr("class", "st-link st-link-treeID")
+            .attr("id", function(d) {
+              return `st-link-treeID-${d.data.id}`;
+            })
+            .attr("d", (function(e) {
+                var s = {
+                  x: t.cx,
+                  y: t.cy
+                };
+                return Z(s, s)
+              }))
+            .style("fill", "none")
+            .style("stroke", "#000")
+            .style("stroke-width", "2px")
+            .on("mouseover", (function(t) {
               const e = d3.select(this).style("stroke");
-              I.style("opacity", 1), z.style("opacity", 1), "blue" !== e ? d3.select(this).style("stroke", "#EF4A60") : d3.select(this).style("stroke", "violet")
-            })).on("mouseleave", (function(t) {
+              I.style("opacity", 1),
+              z.style("opacity", 1),
+              "blue" !== e ? d3.select(this)
+                .style("stroke", "#EF4A60") : d3.select(this)
+                .style("stroke", "violet")
+            }))
+            .on("mouseleave", (function(t) {
               const e = d3.select(this).style("stroke");
-              I.style("opacity", 0).style("top", "-2000px").style("left", "-2000px"), z.style("opacity", 0).style("top", "-2000px").style("left", "-2000px"), "blue" !== e && d3.select(this).style("stroke", "black"), "violet" === e && d3.select(this).style("stroke", "blue")
-            })).on("mousemove", (function(t, e) {
+              I.style("opacity", 0)
+               .style("top", "-2000px")
+               .style("left", "-2000px"),
+              z.style("opacity", 0)
+               .style("top", "-2000px")
+               .style("left", "-2000px"),
+              "blue" !== e && d3.select(this)
+               .style("stroke", "black"),
+              "violet" === e && d3.select(this)
+                .style("stroke", "blue")
+            }))
+            .on("mousemove", (function(t, e) {
               if (Q.tree_type == u) {
                 var s = 0;
                 for (let t = 0; t < e.data.class_distribution[0].length; t++) s += parseInt(e.data.class_distribution[0][t]);
@@ -493,8 +517,43 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
                 z.html(`<b>Samples in link:</b>: ${s}`).style("top", t.pageY - 10 + "px").style("left", t.pageX + 10 + "px"), I.html(`<b>Samples in link:</b>: ${s}`).style("top", t.pageY - 10 + "px").style("left", t.pageX + 10 + "px")
               }
             })),
-            U = 0,
-            W = 0;
+          U = 0,
+          W = 0;
+
+          console.log(P);
+
+          P.enter()
+           .insert("text")
+            .attr("dy", 20)
+           .append("textPath")
+             .attr("side", function(d) {
+               const side = (d.data.node_order.indexOf(d.data.key) + 1) / d.data.node_order.length;
+               if (side < 0.5) {
+                 return "right"
+               } else if (side == 0.5) {
+                 return "";
+               } else {
+                 return "left";
+               }
+             })
+             .attr("startOffset", function(d) {
+               const side = (d.data.node_order.indexOf(d.data.key) + 1) / d.data.node_order.length;
+               if (side < 0.5) {
+                 return "30%"
+               } else if (side == 0.5) {
+                 return "80%";
+               } else {
+                 return "70%";
+               }
+             })
+             .attr("xlink:href", function(d) {
+               return `#st-link-treeID-${d.data.id}`;
+             })
+             .style("text-anchor", "middle")
+             .text(function(d) {
+               return `${d.data.keymap[d.data.key]}`;
+             })
+
           Q.tree_type == y && (W = J.samples);
           for (let t = 0; t < J.class_distribution[0].length; t++) U += parseInt(J.class_distribution[0][t]);
           1 == m && (Q.tree_type == u && G.each((function(t) {
@@ -573,7 +632,7 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
         }));
 
         function R(t) {
-          d3.selectAll("#st-link-treeID").style("stroke", "black"), pathData = function(t) {
+          d3.selectAll(".st-link-treeID").style("stroke", "black"), pathData = function(t) {
             var e = [],
               a = [];
 
@@ -586,7 +645,7 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
             }
           }(t), ids = pathData.ids, nodedata = pathData.nodedata;
           var e = 250 * nodedata.length;
-          e = Math.max(e, 1e3), j.attr("height", e), d3.selectAll("#st-link-treeID").filter((function(t) {
+          e = Math.max(e, 1e3), j.attr("height", e), d3.selectAll(".st-link-treeID").filter((function(t) {
             return ids.includes(t.id)
           })).style("stroke", "blue");
           const a = d3.selectAll("#st-side-panel-treeID");

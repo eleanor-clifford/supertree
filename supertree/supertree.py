@@ -453,11 +453,11 @@ class SuperTree:
             if (not self.model_type.startswith("nodata")) and feature >= 0:
                 node.start_end_x_axis[feature][node.node_order.index(child_state)] = threshold
 
-        for key, node_children in node.node_children.items():
-            if node_children != -1:
-                node.add_node(key, self.nodes[node_children])
+        for key, node_child in node.node_children.items():
+            if node_child != -1:
+                node.add_node(key, self.nodes[node_child])
                 self._create_node_dfs(
-                    node_children,
+                    node_child,
                     key,
                     node.threshold,
                     node.feature,
