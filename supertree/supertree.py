@@ -742,8 +742,8 @@ class SuperTree:
                     "samples": samples,
                     "is_leaf": is_leaf,
                     "child_indices": {
-                        "left": left_children,
-                        "right": right_children,
+                        "false": left_children,
+                        "true": right_children,
                     }
                 }
                 self.node_list.append(node_info)
@@ -861,8 +861,8 @@ class SuperTree:
                 "samples": node["internal_count"],
                 "is_leaf": False,
                 "child_indices": {
-                    "left": None,
-                    "right": None,
+                    "false": None,
+                    "true": None,
                 }
             }
             self.node_list.append(node_info)
@@ -872,8 +872,8 @@ class SuperTree:
             right_child_index = self.collect_node_info_lgbm(
                 node["right_child"], depth + 1
             )
-            self.node_list[node_index]["child_indices"]["left"] = left_child_index
-            self.node_list[node_index]["child_indices"]["right"] = right_child_index
+            self.node_list[node_index]["child_indices"]["false"] = left_child_index
+            self.node_list[node_index]["child_indices"]["true"] = right_child_index
         else:
             predicted_data = None
             if self.model_type.startswith("nodata"):
@@ -893,8 +893,8 @@ class SuperTree:
                 "samples": node["leaf_count"],
                 "is_leaf": True,
                 "child_indices": {
-                    "left": -1,
-                    "right": -1,
+                    "false": -1,
+                    "true": -1,
                 }
             }
 
@@ -938,8 +938,8 @@ class SuperTree:
                 "samples": node.get("cover", 0),
                 "is_leaf": False,
                 "child_indices": {
-                    "left": None,
-                    "right": None,
+                    "false": None,
+                    "true": None,
                 }
             }
             self.node_list.append(node_info)
@@ -949,8 +949,8 @@ class SuperTree:
             right_child_index = self.collect_node_info_xgboost(
                 node["children"][1], depth + 1
             )
-            self.node_list[node_index]["child_indices"]["left"] = left_child_index
-            self.node_list[node_index]["child_indices"]["right"] = right_child_index
+            self.node_list[node_index]["child_indices"]["false"] = left_child_index
+            self.node_list[node_index]["child_indices"]["true"] = right_child_index
         else:
             class_dist = ["No data"]
             if self.model_type == "classification":
@@ -973,8 +973,8 @@ class SuperTree:
                 "samples": node.get("cover", 0),
                 "is_leaf": True,
                 "child_indices": {
-                    "left": -1,
-                    "right": -1,
+                    "false": -1,
+                    "true": -1,
                 },
             }
             self.node_list.append(node_info)
@@ -1026,8 +1026,8 @@ class SuperTree:
                 "samples": samples,
                 "is_leaf": is_leaf,
                 "child_indices": {
-                    "left": left_child,
-                    "right": left_child,
+                    "false": left_child,
+                    "true": right_child,
                 },
             }
             self.node_list.append(node_info)
@@ -1114,8 +1114,8 @@ class SuperTree:
                                 "samples": -1,
                                 "is_leaf": True if node['left_child'] == -1 and node['right_child'] == -1 else False,
                                 "child_indices": {
-                                    "left": node['left_child'],
-                                    "right": node['left_child'],
+                                    "false": node['left_child'],
+                                    "true": node['right_child'],
                                 },
                             }
 

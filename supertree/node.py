@@ -18,7 +18,7 @@ class Node:
         self.node_children = node_children
         self.nodes = dict()
         self.start_end_x_axis = []
-        self.node_order = node_order or ["left", "right"]
+        self.node_order = node_order or ["false", "true"]
         self.key = None  # I can't remember if this is duplicated or no
 
 
