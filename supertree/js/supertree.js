@@ -17,11 +17,28 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
     }
     return s("warning", "D3.js not loaded after timeout"), l.innerHTML = '\n  <div style="color: red; font-weight: bold;">\n    D3.js library is not loaded. Try Again :(.\n  </div>', !1
   }("#graph-div-treeID").then((() => {
-    d3.select("#openModalBtn").attr("class", "st-option-button"), d3.select("#graph-div-treeID").attr("class", "st-body-tree-div-treeID");
+
+    d3.select("#openModalBtn")
+      .attr("class", "st-option-button"),
+    d3.select("#graph-div-treeID")
+      .attr("class", "st-body-tree-div-treeID");
+
     let t = Math.random();
     ! function() {
       let e = document.getElementsByTagName("body")[0],
-        s = `\n  <div id="myModal-treeID" class="st-modal">\n    <div class="st-modal-content">\n       <span id="closeBtn-treeID" class="st-closeBtn">&times;</span>\n      <div id="st-info-div-treeID" class="st-info-div"></div>\n      <div id = "toolbar-treeID" class="st-toolbar"></div>\n      <div id ="graph-div-treeID" class ="st-tree-div-${t}"></div>   \n    <div id="st-side-panel-treeID" class="st-side-panel">\n      <span id="st-close-button-treeID" class="st-close-button">&times;</span>\n    <div>\n    </div>\n  </div>\n  `;
+        s = `
+  <div id="myModal-treeID" class="st-modal">
+    <div class="st-modal-content">
+      <span id="closeBtn-treeID" class="st-closeBtn">&times;</span>
+      //<div id="st-info-div-treeID" class="st-info-div"></div>
+      <div id = "toolbar-treeID" class="st-toolbar"></div>
+      <div id ="graph-div-treeID" class ="st-tree-div-${t}"></div>
+    <div id="st-side-panel-treeID" class="st-side-panel">
+      <span id="st-close-button-treeID" class="st-close-button">&times;</span>
+    <div>
+    </div>
+  </div>
+      `;
       e.insertAdjacentHTML("beforeend", s)
     }();
     var i = !1;
@@ -456,13 +473,14 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
             }))
             .attr("transform", "translate(-97.5,0)")
             .style("fill-opacity", 1e-6)
-            .style("font-size", "0px"), L.selectAll(".st-pie-target2")
-            .attr("y", (function(t, e) {
-              return -10 - 2 * Math.max(20, Math.min(w, k) / 2 * Math.sqrt(t.data.classDistributionValue / v)) - 40 * e
-            }))
-            .attr("transform", "translate(-97.5,0)")
-            .style("fill-opacity", 1e-6)
             .style("font-size", "0px");
+          //L.selectAll(".st-pie-target2")
+            //.attr("y", (function(t, e) {
+              //return -10 - 2 * Math.max(20, Math.min(w, k) / 2 * Math.sqrt(t.data.classDistributionValue / v)) - 40 * e
+            //}))
+            //.attr("transform", "translate(-97.5,0)")
+            //.style("fill-opacity", 1e-6)
+            //.style("font-size", "0px");
 
           let P = V.selectAll(".st-link-treeID").data(b, (function(t) {
             return t.id
@@ -510,11 +528,20 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
                 var s = 0;
                 //for (let t = 0; t < e.data.class_distribution[0].length; t++)
                   //s += parseInt(e.data.class_distribution[0][t]);
+                //
+                names = Q.target_names
+                dists = e.data.class_distribution[0];
+                strings = []
+                for (let i = 0; i < Math.min(names.length, dists.length); i++) {
+                  strings.push(`${names[i]}: ${dists[i]}`);
+                }
+                html = strings.join('<br>')
 
-                z.html(`<b>Class distribution in link:</b> ${e.data.class_distribution[0]}`)
+                z.html(html)
                  .style("top", t.pageY - 10 + "px")
                  .style("left", t.pageX + 10 + "px"),
-                I.html(`<b>Class distribution in link:</b> ${e.data.class_distribution[0]}`)
+
+                I.html(html)
                  .style("top", t.pageY - 10 + "px")
                  .style("left", t.pageX + 10 + "px")
               }
@@ -531,9 +558,9 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
           1 == m && (Q.tree_type == u && G.each((function(t) {
             var e = 0;
             for (let s = 0; s < t.data.class_distribution[0].length; s++) e += parseInt(t.data.class_distribution[0][s]);
-            d3.select(this).style("stroke-width", Math.max(e / U * 20, 1))
+            d3.select(this).style("stroke-width", Math.max(e / U * 40, 1))
           })), Q.tree_type == y && G.each((function(t) {
-            currentSamples = t.data.samples, d3.select(this).style("stroke-width", Math.max(currentSamples / W * 20, 1))
+            currentSamples = t.data.samples, d3.select(this).style("stroke-width", Math.max(currentSamples / W * 40, 1))
           }))), G.merge(P).transition().duration(nt).attr("d", (function(t) {
             return Z(t.parent, t)
           }));
@@ -551,7 +578,20 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
             return path = `M ${1*t.x} ${1*t.y}\n      C ${(1*t.x+1*e.x)/2} ${1*t.y},\n        ${(1*t.x+1*e.x)/2} ${1*e.y},\n        ${1*e.x} ${1*e.y}`, path
           }
         }
-        "string" == typeof L && (L = 4), s("debug", L, "start depth value"), K(T, 0, L), O(T, !1), N(), "DecisionTreeClassifier" != Q.model_name && "DecisionTreeRegressor" != Q.model_name && (s("debug", "hello"), d3.selectAll("#st-info-div-treeID").append("p").text(`${Q.model_name} ${Q.which_tree}`).style("font-size", "12px").style("color", "black"));
+
+        typeof L == "string" && (L = 4),
+        s("debug", L, "start depth value"),
+        K(T, 0, L),
+        O(T, !1),
+        N();
+        //"DecisionTreeClassifier" != Q.model_name && "DecisionTreeRegressor" != Q.model_name && (
+          //d3.selectAll("#st-info-div-treeID")
+            //.append("p")
+            //.text(`${Q.model_name} ${Q.which_tree}`)
+            //.style("font-size", "12px")
+            //.style("color", "black")
+        //);
+
         const it = function(t) {
             I.style("opacity", 1), z.style("opacity", 1)
           },
@@ -636,11 +676,18 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
             }))
           }))
         }
-        if (!Q.tree_type.startsWith(f)) d3.selectAll("#toolbar-treeID").append("button").html('<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-vector-spline"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 3m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" /><path d="M3 17m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" /><path d="M17 5c-6.627 0 -12 5.373 -12 12" /></svg>').attr("id", "boldLink").attr("class", "st-option-button").on("click", (function() {
-          m = !m, O(T, !0)
-        })).on("mouseover", it).on("mouseleave", dt).on("mousemove", (function(t) {
-          ct(event, "Change line tickness scalling in reference to samples in child node")
-        }));
+        //if (!Q.tree_type.startsWith(f)) {
+          //d3.selectAll("#toolbar-treeID")
+            //.append("button")
+            //.html('<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-vector-spline"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 3m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" /><path d="M3 17m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" /><path d="M17 5c-6.627 0 -12 5.373 -12 12" /></svg>')
+            //.attr("id", "boldLink")
+            //.attr("class", "st-option-button")
+            //.on("click", (function() {
+              //m = !m, O(T, !0)
+            //})).on("mouseover", it).on("mouseleave", dt).on("mousemove", (function(t) {
+              //ct(event, "Change line tickness scalling in reference to samples in child node")
+            //}));
+        //}
         d3.selectAll("#st-close-button-treeID").on("click", (function() {
           d3.selectAll("#st-side-panel-treeID").classed("show", !1).classed("hide", !0), setTimeout((function() {
             j.selectAll("g").remove()
@@ -649,15 +696,34 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
         d3.selectAll("#toolbar-treeID").append("button").html('<svg style="display: inline" xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>').attr("id", "resetZoom").attr("class", "st-option-button").on("click", (() => N())).on("mouseover", it).on("mouseleave", dt).on("mousemove", (function(t) {
           ct(event, "Zoom reset")
         }));
-        if (Q.tree_type == u) d3.selectAll("#toolbar-treeID").append("button").html('<svg style="display: inline" xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 13v.01" /><path d="M4 9v.01" /><path d="M4 5v.01" /><path d="M17 20l3 -3l-3 -3" /><path d="M4 17h16" /></svg>').attr("id", "changeXAxis").attr("class", "st-option-button").on("click", (function() {
-          x = !x, O(T, !0)
-        })).on("mouseover", it).on("mouseleave", dt).on("mousemove", (function(t) {
-          ct(event, "Change Scale on X Axis")
-        })), d3.selectAll("#toolbar-treeID").append("button").html('<svg style="display: inline" xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11 20h-.01" /><path d="M15 20h-.01" /><path d="M19 20h-.01" /><path d="M4 7l3 -3l3 3" /><path d="M7 20v-16" /></svg>').attr("id", "changeYAxis").attr("class", "st-option-button").on("click", (function() {
-          g = !g, O(T, !0)
-        })).on("mouseover", it).on("mouseleave", dt).on("mousemove", (function(t) {
-          ct(event, "Change Scale on Y Axis")
-        }));
+        //if (Q.tree_type == u) {
+          //d3.selectAll("#toolbar-treeID")
+            //.append("button")
+            //.html('<svg style="display: inline" xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 13v.01" /><path d="M4 9v.01" /><path d="M4 5v.01" /><path d="M17 20l3 -3l-3 -3" /><path d="M4 17h16" /></svg>')
+            //.attr("id", "changeXAxis")
+            //.attr("class", "st-option-button")
+            //.on("click", (function() {
+              //x = !x, O(T, !0)
+            //}))
+            //.on("mouseover", it)
+            //.on("mouseleave", dt)
+            //.on("mousemove", (function(t) {
+              //ct(event, "Change Scale on X Axis")
+            //})),
+          //d3.selectAll("#toolbar-treeID")
+            //.append("button")
+            //.html('<svg style="display: inline" xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11 20h-.01" /><path d="M15 20h-.01" /><path d="M19 20h-.01" /><path d="M4 7l3 -3l3 3" /><path d="M7 20v-16" /></svg>')
+            //.attr("id", "changeYAxis")
+            //.attr("class", "st-option-button")
+            //.on("click", (function() {
+              //g = !g, O(T, !0)
+            //}))
+            //.on("mouseover", it)
+            //.on("mouseleave", dt)
+            //.on("mousemove", (function(t) {
+              //ct(event, "Change Scale on Y Axis")
+            //}));
+        //}
         const pt = d3.selectAll("#toolbar-treeID");
         var H = [],
           P = pt.append("select").attr("id", "st-depth-dropdown").attr("class", "st-dropdown").on("change", (function(t, e = "optional") {
@@ -672,26 +738,36 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
               }), nt), H = [], N()
             }
           }));
-        if (Q.tree_type == u) {
-          let ut = pt.append("select").attr("id", "st-color-dropdown").attr("class", "st-dropdown").on("change", (function() {
-              var t = Z(this.value);
-              if (ot = M.slice(20 * (t - 1), 20 * t), Q.feature_names.length > ot.length) {
-                let s = Q.feature_names.length - ot.length;
+        //if (Q.tree_type == u) {
+          //let ut = pt.append("select").attr("id", "st-color-dropdown").attr("class", "st-dropdown").on("change", (function() {
+              //var t = Z(this.value);
+              //if (ot = M.slice(20 * (t - 1), 20 * t), Q.feature_names.length > ot.length) {
+                //let s = Q.feature_names.length - ot.length;
 
-                function e() {
-                  let t = "#";
-                  for (let e = 0; e < 6; e++) t += "0123456789ABCDEF" [Math.floor(16 * Math.random())];
-                  return t
-                }
-                for (let a = 0; a < s; a++) ot.push(e())
-              }
-              O(T, !0)
-            })),
-            ft = [];
-          d3.selectAll(".st-option-button").style("user-select", "none").style("-webkit-user-select", "none").style("-moz-user-select", "none").style("-ms-user-select", "none");
-          for (let mt = 1; mt <= M.length / 20; mt++) ft.push(`Palette = ${mt}`);
-          ut.selectAll("option").data(ft).enter().append("option").attr("value", (t => t)).text((t => t))
-        }
+                //function e() {
+                  //let t = "#";
+                  //for (let e = 0; e < 6; e++) t += "0123456789ABCDEF" [Math.floor(16 * Math.random())];
+                  //return t
+                //}
+                //for (let a = 0; a < s; a++) ot.push(e())
+              //}
+              //O(T, !0)
+            //})),
+            //ft = [];
+          //d3.selectAll(".st-option-button")
+            //.style("user-select", "none")
+            //.style("-webkit-user-select", "none")
+            //.style("-moz-user-select", "none")
+            //.style("-ms-user-select", "none");
+          //for (let mt = 1; mt <= M.length / 20; mt++)
+            //ft.push(`Palette = ${mt}`);
+          //ut.selectAll("option")
+            //.data(ft)
+            //.enter()
+            //.append("option")
+            //.attr("value", (t => t))
+            //.text((t => t))
+        //}
 
         function G(t, e, s, a) {
           if (++e < s) {
@@ -709,10 +785,20 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
             G(t, e, s, a)
           })), 1 == a && H.push(t))
         }
-        setTimeout((function() {
-          logoURL = "https://mljar.com/images/logo/logo_blue_white.svg";
-          d3.select("#toolbar-treeID").append("button").attr("class", "st-option-button").style("background", "transparent").style("border", "none").style("cursor", "pointer").style("padding", "0").style("position", "relative").append("img").attr("src", logoURL).style("height", "50px")
-        }), 100);
+        //setTimeout((function() {
+          //logoURL = "https://mljar.com/images/logo/logo_blue_white.svg";
+          //d3.select("#toolbar-treeID")
+            //.append("button")
+            //.attr("class", "st-option-button")
+            //.style("background", "transparent")
+            //.style("border", "none")
+            //.style("cursor", "pointer")
+            //.style("padding", "0")
+            //.style("position", "relative")
+            //.append("img")
+            //.attr("src", logoURL)
+            //.style("height", "50px")
+        //}), 100);
         var U = 0;
         ! function t(e, s) {
           s++, U = Math.max(s, U), e.children && e.children.forEach((function(e) {
@@ -734,7 +820,14 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
           const e = t.match(/\d+/);
           return e ? parseInt(e[0], 10) : null
         }
-        P.selectAll("option").data(W).enter().append("option").attr("value", (t => t)).text((t => t)), P.property("value", W[Math.min(L - 1, W.length - 1)])
+        P.selectAll("option")
+         .data(W)
+         .enter()
+         .append("option")
+         .attr("value", (t => t))
+         .text((t => t)),
+        P.property("value", W[Math.min(L - 1, W.length - 1)])
+
       }
     }))
   })).catch((t => {
@@ -1099,14 +1192,69 @@ function r(t, e, a, l, r, n, o, i, d, c, p, h, y, u) {
       };
     if (A[0] && "data" in A[0]) {
       let t = p.select(this).datum();
-      p.select(this).selectAll("path").data(A).join("path").attr("class", "piechart").attr("d", D).attr("fill", ((t, e) => i[k[e]])).attr("transform", `translate(10,${_-2})`).attr("stroke", "black").on("mouseover", E).on("mouseleave", $).on("mousemove", M).on("click", (function() {
-        c(t)
-      })).style("stroke-width", m ? "4px" : "2px").each((function(t) {
-        this._current = t
-      })), s("debug", m, "Exist Sample true false"), p.select(this).append("g").attr("class", "st-text-pie").attr("text-anchor", "middle").selectAll(".st-text-pie").data(A).join("g").attr("transform", ((t, e) => `translate(10,${2*_+20+40*e})`)).each((function(t, e) {
-        const s = p.select(this);
-        s.append("text").attr("class", "st-pie-target").attr("x", 0).attr("y", 0).attr("fill", "black").style("text-anchor", "middle").style("font-size", "18px").text(t.data.target_name).style("user-select", "none").style("-webkit-user-select", "none").style("-moz-user-select", "none").style("-ms-user-select", "none"), s.append("text").attr("class", "st-pie-target2").attr("x", 0).attr("y", 20).attr("fill", "black").style("text-anchor", "middle").style("font-size", "18px").text(f(t.data.classDistributionValue)).style("user-select", "none").style("-webkit-user-select", "none").style("-moz-user-select", "none").style("-ms-user-select", "none")
-      }))
+      p.select(this)
+       .selectAll("path")
+       .data(A)
+       .join("path")
+       .attr("class", "piechart")
+       .attr("d", D)
+       .attr("fill", ((t, e) => i[k[e]]))
+       .attr("transform", `translate(10,${_-2})`)
+       .attr("stroke", "black")
+       .on("mouseover", E)
+       .on("mouseleave", $)
+       .on("mousemove", M)
+       .on("click", (function() {
+         c(t)
+       }))
+       .style("stroke-width", m ? "4px" : "2px")
+       .each((function(t) {
+         this._current = t
+       })),
+      s("debug", m, "Exist Sample true false"),
+      p.select(this)
+       .append("g")
+       .attr("class", "st-text-pie")
+       .attr("text-anchor", "middle")
+       .selectAll(".st-text-pie")
+       .data(A)
+       .join("g")
+       .attr("transform", ((t, e) => `translate(10,${2*_+20+20*e})`))
+       .each((function(t, e) {
+         const s = p.select(this);
+         s.append("text")
+          .attr("class", "st-pie-target")
+          .attr("x", 0)
+          .attr("y", 0)
+          .attr("fill", "black")
+          .style("text-anchor", "middle")
+          .style("font-size", "18px")
+          .text(`${t.data.target_name}: ${t.data.classDistributionValue}`)
+          .style("user-select", "none")
+          .style("-webkit-user-select", "none")
+          .style("-moz-user-select", "none")
+          .style("-ms-user-select", "none")
+         //s.append("text")
+          //.attr("class", "st-pie-target2")
+          //.attr("x", 0)
+          //.attr("y", 20)
+          //.attr("fill", "black")
+          //.style("text-anchor", "middle")
+          //.style("font-size", "18px")
+          //.text(f(t.data.classDistributionValue))
+          //.style("user-select", "none")
+          //.style("-webkit-user-select", "none")
+          //.style("-moz-user-select", "none")
+          //.style("-ms-user-select", "none")
+       })),
+      p.select(this)
+       .append("foreignObject")
+        .attr("width", 40)
+        .attr("height", 40)
+        .attr("y", -40)
+        .append("xhtml:div")
+        .html(function(t) {return `<p>${t.data.key}</p>`})
+
     } else {
       p.select(this)
         .append("rect")

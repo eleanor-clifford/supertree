@@ -80,7 +80,8 @@ class SuperTree:
         feature_names: Optional[List[str]] = None,
         target_names: Optional[Union[str, List[str]]] = None,
         license_key: str = "key",
-        node_order: list = None,
+        node_order: Optional[list] = None,
+        label_map: Optional[dict[str, str]] = None,
     ):
 
         valid_model_classes = [
@@ -106,7 +107,7 @@ class SuperTree:
             "XGBRFRegressor",
             "ModelLoader",
             "ModelProto",
-            "Tree",  # CHAID ...
+            "Tree",  # treelib ...
         ]
 
         if model.__class__.__name__ not in valid_model_classes:
@@ -138,6 +139,7 @@ class SuperTree:
         self.nodes = []
         self.node_list = []
         self.node_order = node_order
+        self.label_map = label_map
         self.model = model
         self.model_name = model.__class__.__name__
         self.model_type = self.which_model()
@@ -455,7 +457,8 @@ class SuperTree:
             if (not self.model_type.startswith("nodata")) and feature >= 0:
                 node.start_end_x_axis[feature][node.node_order.index(child_state)] = threshold
 
-        for key, node_child in node.node_children.items():
+        for _key, node_child in node.node_children.items():
+            key = (self.label_map or {}).get(_key, _key)
             if node_child != -1:
                 node.add_node(key, self.nodes[node_child])
                 self._create_node_dfs(
@@ -549,7 +552,7 @@ class SuperTree:
 
         for j in range(len(self.feature_data)):
             for i in range(len(node.start_end_x_axis)):
-                # TODO: !!!!
+                # TODO: !!!! (... ECC has now forgotten why this todo is here)
                 if node.start_end_x_axis[i][0] != "notexist" and node.start_end_x_axis[i][0] is not None:
                     if node.start_end_x_axis[i][0] <= self.feature_data[j][i]:
                         index_set.add(j)
@@ -791,11 +794,10 @@ class SuperTree:
             self.collect_node_info_onnx(self.model)
 
         if model_name in ("Tree"):
-            self.collect_node_info_chaid(self.model)
+            self.collect_node_info_treelib(self.model)
 
 
-    def collect_node_info_chaid(self, tree):
-        tree = tree.to_tree()
+    def collect_node_info_treelib(self, tree):
         tree_id = tree.identifier
 
         all_node_keys = set()
@@ -803,9 +805,9 @@ class SuperTree:
             all_node_keys.add(" or ".join(sorted(node.tag.choices)))
 
         for i, node in enumerate(tree.all_nodes()):
-            print("===")
-            inspect(node, "node", depth=2, not_key=["fpointer", "bpointer", "update_bpointer", "reset_pointers", "set_initial_tree_id"], single_arg=tree_id)
-            print("===")
+            # print("===")
+            # inspect(node, "node", depth=2, not_key=["fpointer", "bpointer", "update_bpointer", "reset_pointers", "set_initial_tree_id"], single_arg=tree_id)
+            # print("===")
             successors = node.successors(tree_id)
 
             children = {}
