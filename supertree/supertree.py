@@ -1,6 +1,7 @@
 import json
 from copy import deepcopy
 from typing import List, Optional, Union
+from tqdm import tqdm
 
 import numpy as np
 import pandas as pd
@@ -486,39 +487,87 @@ class SuperTree:
             print("Uknown Model")
             return "uknown_model"
 
-    def count_class_distribution(self, node):
+    def count_nodes(self, node):
+        total = 1
+        for key, child_node in node.nodes.items():
+            if child_node is not None:
+                total += self.count_nodes(child_node)
+
+        return total
+
+
+    def count_class_distribution(self, node, bar=None, recursed=False, verify=False):
         """
         Count class distribution if model data about samples is not in model.
         """
+
+        if bar is None and not recursed:
+            bar = tqdm(total=self.count_nodes(node), desc="Counting classes")
+
         target_len = self.target_len
         node.class_distribution = [0] * target_len
-        index_set = set()
 
-        for j in range(len(self.feature_data)):
-            for i in range(len(node.start_end_x_axis)):
-                # TODO: !!!! (... ECC has now forgotten why this todo is here)
-                if node.start_end_x_axis[i][0] != "notexist" and node.start_end_x_axis[i][0] is not None:
-                    if node.start_end_x_axis[i][0] <= self.feature_data[j][i]:
-                        index_set.add(j)
+        # Written by Llama 3.3 70B {{{
 
-                if node.start_end_x_axis[i][1] != "notexist" and node.start_end_x_axis[i][1] is not None:
-                    if node.start_end_x_axis[i][1] > self.feature_data[j][i]:
-                        index_set.add(j)
+        # Assuming self.feature_data is a 2D NumPy array and node.start_end_x_axis is a list of lists
+        # Convert node.start_end_x_axis to a 2D NumPy array for easier manipulation
+        start_end_x_axis = np.array(node.start_end_x_axis, dtype=object)  # dtype added by ECC
 
+        # Replace "notexist" with np.nan for easier comparison
+        start_end_x_axis[start_end_x_axis == "notexist"] = np.nan
 
+        start_end_x_axis = start_end_x_axis.astype(np.float64)  # added by ECC
+
+        # Create a mask for the lower bound condition
+        lower_bound_mask = ~np.isnan(start_end_x_axis[:, 0]) & (start_end_x_axis[:, 0] <= self.feature_data)
+
+        # Create a mask for the upper bound condition
+        upper_bound_mask = ~np.isnan(start_end_x_axis[:, 1]) & (self.feature_data < start_end_x_axis[:, 1])
+
+        # Combine the masks to get the indices where either condition is true
+        index_mask = np.any(lower_bound_mask | upper_bound_mask, axis=1)
+
+        # Get the indices where the condition is true
+        indices = np.where(index_mask)[0]
+
+        # Convert the indices to a set
+        index_set = set(indices)
+
+        # }}}
+
+        if verify:
+            # this exists because ECC doesn't trust the Llama 3 code
+            index_set_2 = set()
+            for j in range(len(self.feature_data)):
+                for i in range(len(node.start_end_x_axis)):
+                    # TODO: !!!! (... ECC has now forgotten why this todo is here)
+                    if node.start_end_x_axis[i][0] != "notexist" and node.start_end_x_axis[i][0] is not None:
+                        if node.start_end_x_axis[i][0] <= self.feature_data[j][i]:
+                            index_set.add(j)
+
+                    if node.start_end_x_axis[i][1] != "notexist" and node.start_end_x_axis[i][1] is not None:
+                        if node.start_end_x_axis[i][1] > self.feature_data[j][i]:
+                            index_set.add(j)
+
+            assert index_set == index_set_2
 
         samples = 0
         for i in range(len(self.target_data)):
             if i not in index_set:
                 node.class_distribution[self.target_data[i]] += 1
                 samples += 1
+
         if node.samples is None:
             node.samples = samples
         node.class_distribution = [node.class_distribution]
 
+        if bar:
+            bar.update(1)
+
         for key, child_node in node.nodes.items():
             if child_node is not None:
-                self.count_class_distribution(child_node)
+                self.count_class_distribution(child_node, bar=bar, recursed=True)
+
 
     def is_model_fitted(self):
 
