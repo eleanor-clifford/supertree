@@ -13,62 +13,6 @@ from supertree.treedata import TreeData
 import importlib.metadata
 import ipywidgets as widgets
 
-from pprint import pprint
-import traceback
-from typing import Mapping, Sequence
-def stringify(d):
-    if isinstance(d, Mapping):
-        return {
-            stringify(k): stringify(v)
-            for k, v in d.items()
-        }
-    elif isinstance(d, Sequence) and not isinstance(d, str):
-        return tuple(stringify(x) for x in d)
-    else:
-        return str(d)
-
-import sys
-import re
-from inspect import signature as sig
-from typing import Union
-def inspect(obj, name, depth=0, show_hidden=False, indent=0, file=sys.stdout, not_type=Union[int, str, list], not_key=[], single_arg=None):
-    _p = " " * indent + name + ": "
-    if depth == 0:
-        if callable(obj):
-            if len(sig(obj).parameters) == 0:
-                s = "(func(0)) " + str(obj())
-            elif len(sig(obj).parameters) == 1 and single_arg:
-                s = "(func(1)) " + str(obj(single_arg))
-            else:
-                s = "(func) " + str(sig(obj))
-        else:
-            s = str(obj)
-        print(_p + s.replace("\n", "\n" + _p), file=file)
-    else:
-        inspect(
-            obj, name,
-            depth=0, indent=indent,
-            show_hidden=show_hidden, file=file,
-            not_type=not_type, not_key=not_key,
-            single_arg=single_arg,
-        )
-        if not callable(obj) and not isinstance(obj, not_type):
-            for key in dir(obj):
-                if key[0] == "_" and not show_hidden:
-                    continue
-                if key in not_key:
-                    continue
-                inspect(
-                    getattr(obj, key), key,
-                    depth=depth-1, indent=indent+2,
-                    show_hidden=show_hidden, file=file,
-                    not_type=not_type, not_key=not_key,
-                    single_arg=single_arg,
-                )
-
-
-
-
 class SuperTree:
     def __init__(
         self,
@@ -805,9 +749,6 @@ class SuperTree:
             all_node_keys.add(" or ".join(sorted(node.tag.choices)))
 
         for i, node in enumerate(tree.all_nodes()):
-            # print("===")
-            # inspect(node, "node", depth=2, not_key=["fpointer", "bpointer", "update_bpointer", "reset_pointers", "set_initial_tree_id"], single_arg=tree_id)
-            # print("===")
             successors = node.successors(tree_id)
 
             children = {}
