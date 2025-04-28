@@ -812,6 +812,8 @@ class SuperTree:
             elif node.tag.split_variable is not None:
                 print(f"WARNING: {node.tag.split_variable} not in feature_names")
                 feature = 0
+            else:
+                feature = -1
 
             node_info = {
                 "index": i,
