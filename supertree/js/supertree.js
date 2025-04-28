@@ -109,7 +109,7 @@ function a(t = "st-licence-KEY", e = "data/bugdata.json", a = "$treetemplate") {
             children: [],
             ...e
           } : {
-            children: [...e.node_children].map(t),
+            children: [...e.node_children].filter(x => x !== null).map(t),
             ...e
           }
         }(J),
