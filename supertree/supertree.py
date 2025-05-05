@@ -543,11 +543,11 @@ class SuperTree:
                     # TODO: !!!! (... ECC has now forgotten why this todo is here)
                     if node.start_end_x_axis[i][0] != "notexist" and node.start_end_x_axis[i][0] is not None:
                         if node.start_end_x_axis[i][0] <= self.feature_data[j][i]:
-                            index_set.add(j)
+                            index_set_2.add(j)
 
                     if node.start_end_x_axis[i][1] != "notexist" and node.start_end_x_axis[i][1] is not None:
                         if node.start_end_x_axis[i][1] > self.feature_data[j][i]:
-                            index_set.add(j)
+                            index_set_2.add(j)
 
             assert index_set == index_set_2
 
