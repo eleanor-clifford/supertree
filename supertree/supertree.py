@@ -801,11 +801,11 @@ class SuperTree:
             successors = node.successors(tree_id)
 
             children = {}
-            for succ_idx in successors:
-                succ = tree.all_nodes()[succ_idx]
+            for succ_id in successors:
+                succ = tree.get_node(succ_id)
                 choices = succ.tag.choices
                 assert len(choices) == 1  # cannot handle multiple choices for now
-                children[choices[0]] = succ_idx
+                children[choices[0]] = succ_id
 
             if node.tag.split_variable in self.feature_names:
                 feature = self.feature_names.index(node.tag.split_variable)
